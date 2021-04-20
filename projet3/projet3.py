@@ -50,25 +50,30 @@ class rayon:
                 X1 = (-B-np.sqrt(delta))/(2*A)
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
-            if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
+            if round(X1) == round(self.x) and round(Y1) == round(self.y): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
+                print('continue')
                 continue
             print("y1 < miroir.max", Y1 <= miroir.max, Y1)
             print("y1> miroir.min", Y1 >= miroir.min, miroir.max)
             print((((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))))
             print(X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc))
+            print("x_array", X1 <= max(self.x_array))
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
-            if  Y1 <= miroir.max and Y1 >= miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))) and X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc) and X1 <= max(self.x_array):
+            if Y1 < miroir.max and Y1 > miroir.min  and X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)) and X1 <= max(self.x_array):
                 
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
-                teta_nouveau = -np.pi + 2*teta_rayon - self.teta    #On calcule l'angle du rayon réfléchi
-                    
+                teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
+
+                print("teta_rayon", teta_rayon)
+                print("teta_nouveau", teta_nouveau)
+                print("teta", self.teta)
                 if abs(teta_nouveau) > np.pi/2 and abs(teta_nouveau) < 3*np.pi/2: #On définit la direction du rayon en fonction de son angle
                     direction = False
                 else:
                     direction = True
-                
+                print("direction:",direction)
                 #On créé un nouveau rayon (réfléchi) en fonction du point de contact avec le miroir, l'angle et sa direction
                 lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = miroir, direction = direction))
 
@@ -112,18 +117,25 @@ class miroir:
         self.trace()    #On trace le miroir
 
     def trace(self):
-        teta = np.linspace(-self.diametre, self.diametre,500)   #Vecteur teta correspondant à l'angle de chaque point du cercle par rapport à l'axe des x
+        teta = np.linspace(-self.diametre, self.diametre,1000)   #Vecteur teta correspondant à l'angle de chaque point du cercle par rapport à l'axe des x
         
         self.xc = self.r*np.cos(teta) - self.r + self.x #array des x
         self.yc = self.r*np.sin(teta)   #array des y
 
-        self.max = max(self.yc)
+        self.max = np.max(self.yc)
         self.min = -self.max
         
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
-        #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
+        self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
         
         
+
+
+
+
+
+
+
     
 if __name__ == "__main__":
     fig = plt.subplots()  
@@ -132,23 +144,25 @@ if __name__ == "__main__":
     lst_miroir = []
     lst_source = []
     
-    def test(ouverture, diametre, rayon):
+    def test(ouverture, diametre, rayon, inf):
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue"))
-        lst_source.append(source(fig,-4, 0,ouverture, 10, inf = True, height = 12))
+        lst_source.append(source(fig,-4, 0,ouverture, 5, inf = inf, height = 8))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
-
+    axe_infiny = plt.axes([0.025, 0.7, 0.1, 0.1])
 
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
+    button = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'), active=0)
+
 
 
     def mise_a_jour(val=None):
@@ -166,14 +180,19 @@ if __name__ == "__main__":
         diametre = slider_diametre.val
         rayon = slider_rayon.val
 
-        test(ouverture, diametre, rayon)
+        if button.value_selected == "Infinie":
+            inf = True
+        else:
+            inf = False
+
+        test(ouverture, diametre, rayon, inf)
         
 
 
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
-
+    button.on_clicked(mise_a_jour)
 
     mise_a_jour()
     
