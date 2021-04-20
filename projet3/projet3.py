@@ -120,27 +120,42 @@ class miroir:
         
     
 if __name__ == "__main__":
-    fig = plt.subplots()      
+    fig = plt.subplots()  
 
     lst_ray = []
     lst_miroir = []
     lst_source = []
     
-    def test():
+    def test(ouverture):
+        fig[1].set_xlim(-10,10)
+        fig[1].set_ylim(-7,7)
+        fig[1].grid(True)
+        fig[1].set_aspect("equal")
+
+        lst_miroir.append(miroir(position = 7, r=-5, figure = fig, color = "blue"))
+        lst_source.append(source(fig,-4, 0,ouverture, 6))
+
+    axe_teta = plt.axes([0.4, 0.92, 0.2, 0.03]) #Left, bottom, width, height
+    teta_source = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
+
+    def mise_a_jour(val):
         for rayon in lst_ray:
             del rayon
         for sourcee in lst_source:
             del sourcee
-        plt.clf
-        lst_miroir.append(miroir(position = 7, r=-5, figure = fig, color = "blue"))
+        fig[1].cla()
+        
 
-        lst_source.append(source(fig,-4,-1.5,np.pi/6-0.2, 6))
+        ouverture = teta_source.val
 
-    test()
-    fig[1].grid(True)
-    fig[1].set_aspect("equal")
-    fig[1].set_xlim(-10,10)
-    fig[1].set_ylim(-7,7)
+        test(ouverture)
+
+
+    teta_source.on_changed(mise_a_jour)
+
+
+    test(teta_source.val)
+    
         
 
     plt.show()
