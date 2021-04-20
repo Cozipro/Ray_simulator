@@ -59,7 +59,7 @@ class rayon:
             print(X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc))
             print("x_array", X1 <= max(self.x_array))
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
-            if Y1 < miroir.max and Y1 > miroir.min  and X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)) and X1 <= max(self.x_array):
+            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)) and X1 <= max(self.x_array):
                 
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
@@ -145,12 +145,14 @@ if __name__ == "__main__":
     lst_source = []
     
     def test(ouverture, diametre, rayon, inf):
-        fig[1].set_xlim(-10,10)
+        fig[1].set_xlim(-12,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
+        lst_miroir.append(miroir(position = -10, r=10, dia = np.pi/4, figure = fig, color = "blue"))
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue"))
+        
         lst_source.append(source(fig,-4, 0,ouverture, 5, inf = inf, height = 8))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
