@@ -2,8 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.widgets as wdg
 
-#test
-
 class rayon:
     def __init__(self,figure, x =0, y=0, teta=0, color = "k", direction = True, origine = None):
         self.x = x  #abscisse d'origine
@@ -131,8 +129,8 @@ if __name__ == "__main__":
     def test():
         for rayon in lst_ray:
             del rayon
-        for source in lst_source:
-            del source
+        for sourcee in lst_source:
+            del sourcee
         plt.clf
         lst_miroir.append(miroir(position = 7, r=-5, figure = fig, color = "blue"))
 
