@@ -126,7 +126,7 @@ class miroir:
         self.min = -self.max
         
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
-        self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
+        #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
         
         
 
@@ -145,15 +145,14 @@ if __name__ == "__main__":
     lst_source = []
     
     def test(ouverture, diametre, rayon, inf):
-        fig[1].set_xlim(-12,10)
+        fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
-        lst_miroir.append(miroir(position = -10, r=10, dia = np.pi/4, figure = fig, color = "blue"))
-        lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue"))
-        
-        lst_source.append(source(fig,-4, 0,ouverture, 5, inf = inf, height = 8))
+
+        lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
+        lst_source.append(source(fig,-4, 0,ouverture, 8, inf = inf, height = 8))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
@@ -163,7 +162,7 @@ if __name__ == "__main__":
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
-    button = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'), active=0)
+    button = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'))
 
 
 
@@ -174,7 +173,6 @@ if __name__ == "__main__":
             lst_source.remove(sourcee)
         for miroire in lst_miroir:
             lst_miroir.remove(miroire)
-        print("liste miroir",lst_miroir)
         fig[1].cla()
         
 
@@ -183,11 +181,11 @@ if __name__ == "__main__":
         rayon = slider_rayon.val
 
         if button.value_selected == "Infinie":
-            inf = True
+            infiny = True
         else:
-            inf = False
+            infiny = False
 
-        test(ouverture, diametre, rayon, inf)
+        test(ouverture, diametre, rayon, infiny)
         
 
 
