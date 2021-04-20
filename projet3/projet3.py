@@ -52,10 +52,13 @@ class rayon:
 
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
                 continue
-
+            print("y1 < miroir.max", Y1 <= miroir.max, Y1)
+            print("y1> miroir.min", Y1 >= miroir.min, miroir.max)
+            print((((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))))
+            print(X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc))
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
-            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))) and X1 >= np.min(miroir.xc) and X1 <= round(np.max(miroir.xc)) and X1 <= max(self.x_array):
-
+            if  Y1 <= miroir.max and Y1 >= miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))) and X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc) and X1 <= max(self.x_array):
+                
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
@@ -103,8 +106,8 @@ class miroir:
         self.color = color      #Couleur du miroir
         self.fig, self.ax = figure  #Figure sur laquelle tracer le miroir
 
-        self.max = abs(self.r) * np.sin(self.diametre) #Ordonnée max du cercle utile lors d'une condition dans la méthode rayon.check()
-        self.min = -self.max    #Idem que pour le max, mais avec le minimum
+        self.max = int
+        self.min = int
 
         self.trace()    #On trace le miroir
 
@@ -113,6 +116,9 @@ class miroir:
         
         self.xc = self.r*np.cos(teta) - self.r + self.x #array des x
         self.yc = self.r*np.sin(teta)   #array des y
+
+        self.max = max(self.yc)
+        self.min = -self.max
         
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
@@ -126,35 +132,45 @@ if __name__ == "__main__":
     lst_miroir = []
     lst_source = []
     
-    def test(ouverture):
+    def test(ouverture, diametre):
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
-        lst_miroir.append(miroir(position = 7, r=-5, figure = fig, color = "blue"))
+        lst_miroir.append(miroir(position = 7, r=-6, dia = diametre, figure = fig, color = "blue"))
         lst_source.append(source(fig,-4, 0,ouverture, 6))
 
-    axe_teta = plt.axes([0.4, 0.92, 0.2, 0.03]) #Left, bottom, width, height
-    teta_source = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
+    axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
+    axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) #Left, bottom, width, height
 
-    def mise_a_jour(val):
+
+    slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
+    slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
+
+
+    def mise_a_jour(val=None):
         for rayon in lst_ray:
-            del rayon
+            lst_ray.remove(rayon)
         for sourcee in lst_source:
-            del sourcee
+            lst_source.remove(sourcee)
+        for miroire in lst_miroir:
+            lst_miroir.remove(miroire)
+        print("liste miroir",lst_miroir)
         fig[1].cla()
         
 
-        ouverture = teta_source.val
+        ouverture = slider_teta.val
+        diametre = slider_diametre.val
 
-        test(ouverture)
-
-
-    teta_source.on_changed(mise_a_jour)
+        test(ouverture, diametre)
 
 
-    test(teta_source.val)
+    slider_teta.on_changed(mise_a_jour)
+    slider_diametre.on_changed(mise_a_jour)
+
+
+    mise_a_jour()
     
         
 
