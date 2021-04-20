@@ -132,21 +132,23 @@ if __name__ == "__main__":
     lst_miroir = []
     lst_source = []
     
-    def test(ouverture, diametre):
+    def test(ouverture, diametre, rayon):
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
-        lst_miroir.append(miroir(position = 7, r=-6, dia = diametre, figure = fig, color = "blue"))
-        lst_source.append(source(fig,-4, 0,ouverture, 6))
+        lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue"))
+        lst_source.append(source(fig,-4, 0,ouverture, 10, inf = True, height = 12))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
-    axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) #Left, bottom, width, height
+    axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
+    axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
 
 
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
+    slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
 
 
     def mise_a_jour(val=None):
@@ -162,12 +164,15 @@ if __name__ == "__main__":
 
         ouverture = slider_teta.val
         diametre = slider_diametre.val
+        rayon = slider_rayon.val
 
-        test(ouverture, diametre)
+        test(ouverture, diametre, rayon)
+        
 
 
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
+    slider_rayon.on_changed(mise_a_jour)
 
 
     mise_a_jour()
