@@ -1,3 +1,4 @@
+**Beta 1.0**
 Simulateur de rayon lumineux
 
 - **Paramètres du miroir:**
