@@ -144,25 +144,27 @@ if __name__ == "__main__":
     lst_miroir = []
     lst_source = []
     
-    def test(ouverture, diametre, rayon, inf):
+    def trace(ouverture, diametre, rayon, inf):
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
-
+        
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
-        lst_source.append(source(fig,-4, 0,ouverture, 8, inf = inf, height = 4))
+        lst_source.append(source(fig,-10, 0,ouverture, 8, inf = inf, height = 8))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
     axe_infiny = plt.axes([0.025, 0.7, 0.1, 0.1])
+    axe_r = plt.axes([0.025, 0.5, 0.1, 0.1])
 
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
-    button = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'))
+    button_inf = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'))
+    button_type = wdg.RadioButtons(axe_r, ("Concave", "Convexe"))
 
 
 
@@ -180,22 +182,23 @@ if __name__ == "__main__":
         diametre = slider_diametre.val
         rayon = slider_rayon.val
 
-        if button.value_selected == "Infinie":
+        if button_inf.value_selected == "Infinie":
             infiny = True
         else:
             infiny = False
 
-        test(ouverture, diametre, rayon, infiny)
+        if button_type.value_selected == "Convexe":
+            rayon *= -1
+
+        trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny)
         
 
 
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
-    button.on_clicked(mise_a_jour)
+    button_inf.on_clicked(mise_a_jour)
+    button_type.on_clicked(mise_a_jour)
 
     mise_a_jour()
-    
-        
-
     plt.show()
