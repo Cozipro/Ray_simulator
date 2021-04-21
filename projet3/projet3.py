@@ -50,16 +50,16 @@ class rayon:
                 X1 = (-B-np.sqrt(delta))/(2*A)
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
-            if round(X1) == round(self.x) and round(Y1) == round(self.y): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
+            if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
                 print('continue')
                 continue
             print("y1 < miroir.max", Y1 <= miroir.max, Y1)
             print("y1> miroir.min", Y1 >= miroir.min, miroir.max)
             print((((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))))
-            print(X1 >= np.min(miroir.xc) and X1 <= np.max(miroir.xc))
+            print(X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)))
             print("x_array", X1 <= max(self.x_array))
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
-            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)) and X1 <= max(self.x_array):
+            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and X1 <= max(self.x_array):
                 
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
 
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
-        lst_source.append(source(fig,-4, 0,ouverture, 8, inf = inf, height = 8))
+        lst_source.append(source(fig,-4, 0,ouverture, 8, inf = inf, height = 4))
 
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
