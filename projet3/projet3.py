@@ -130,12 +130,6 @@ class miroir:
         
         
 
-
-
-
-
-
-
     
 if __name__ == "__main__":
     fig = plt.subplots()  
@@ -153,7 +147,8 @@ if __name__ == "__main__":
         
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
         lst_source.append(source(fig,-10, 0,ouverture, 8, inf = inf, height = 8))
-
+    
+    #Création des wigets
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
@@ -169,36 +164,39 @@ if __name__ == "__main__":
 
 
     def mise_a_jour(val=None):
+        #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
         for rayon in lst_ray:
             lst_ray.remove(rayon)
         for sourcee in lst_source:
             lst_source.remove(sourcee)
         for miroire in lst_miroir:
             lst_miroir.remove(miroire)
-        fig[1].cla()
+        fig[1].cla()    #Clear de la figure
         
-
+        #On récupère la valeur des widgets
         ouverture = slider_teta.val
         diametre = slider_diametre.val
         rayon = slider_rayon.val
 
+        #Si infini est choisi, la variable "infiny" devient True, et inversement
         if button_inf.value_selected == "Infinie":
             infiny = True
         else:
             infiny = False
-
+        
+        #Si convexe est choisi, le rayon est inversé.
         if button_type.value_selected == "Convexe":
             rayon *= -1
 
         trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny)
         
 
-
+    #Définition de la fonction à appeler lorsque le widget a été touché
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
     button_inf.on_clicked(mise_a_jour)
     button_type.on_clicked(mise_a_jour)
 
-    mise_a_jour()
+    mise_a_jour()   #On appelle une premiere fois la fonction mise_a_jour() pour réaliser le premier plot
     plt.show()
