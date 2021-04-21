@@ -111,7 +111,7 @@ class miroir:
         self.color = color      #Couleur du miroir
         self.fig, self.ax = figure  #Figure sur laquelle tracer le miroir
 
-        self.max = int
+        self.max = int  #Initialisation des variables max et min
         self.min = int
 
         self.trace()    #On trace le miroir
@@ -122,6 +122,7 @@ class miroir:
         self.xc = self.r*np.cos(teta) - self.r + self.x #array des x
         self.yc = self.r*np.sin(teta)   #array des y
 
+        #Calcul de la hauteur max et min du miroir
         self.max = np.max(self.yc)
         self.min = -self.max
         
@@ -132,19 +133,21 @@ class miroir:
 
     
 if __name__ == "__main__":
-    fig = plt.subplots()  
+    fig = plt.subplots()  #Création de la figure
 
+    #Listes vides que l'on va remplir par les objets
     lst_ray = []
     lst_miroir = []
     lst_source = []
     
     def trace(ouverture, diametre, rayon, inf):
+        #Limites, grille, ratio des axes..
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
-        
+        #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
         lst_source.append(source(fig,-10, 0,ouverture, 8, inf = inf, height = 8))
     
@@ -164,6 +167,7 @@ if __name__ == "__main__":
 
 
     def mise_a_jour(val=None):
+
         #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
         for rayon in lst_ray:
             lst_ray.remove(rayon)
