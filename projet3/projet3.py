@@ -142,8 +142,8 @@ if __name__ == "__main__":
     
     def trace(ouverture, diametre, rayon, inf):
         #Limites, grille, ratio des axes..
-        fig[1].set_xlim(-10,10)
-        fig[1].set_ylim(-7,7)
+        #fig[1].set_xlim(-10,10)
+        #fig[1].set_ylim(-7,7)
         fig[1].grid(True)
         fig[1].set_aspect("equal")
 
