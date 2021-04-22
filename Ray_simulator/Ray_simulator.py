@@ -59,7 +59,7 @@ class rayon:
             print(X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)))
             print("x_array", X1 <= max(self.x_array))
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
-            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and X1 <= max(self.x_array):
+            if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and ((X1 <= max(self.x_array) and self.direction) or (X1 >= min(self.x_array) and self.direction == False)):
                 
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
@@ -135,27 +135,23 @@ class miroir:
 if __name__ == "__main__":
     fig = plt.subplots()  #Création de la figure
 
-    #Listes vides que l'on va remplir par les objets
-    lst_ray = []
-    lst_miroir = []
-    lst_source = []
-    
-    
     #Limites, grille, ratio des axes..
     fig[1].set_xlim(-20,20)
     fig[1].set_ylim(-15,15)
     fig[1].grid(True)
     fig[1].set_aspect("equal")
 
-    #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(position = -10, r=-15, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(position = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_source.append(source(fig,-20, 0,np.pi/4, 4, inf = True, height = 8))
+    #Listes vides que l'on va remplir par les objets
+    lst_ray = []
+    lst_miroir = []
+    lst_source = []
     
-
-
-
-
+    #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
+    lst_miroir.append(miroir(position = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(position = -10, r=-15, dia = np.pi/4, figure = fig, color = "blue")) 
+    
+    #lst_source.append(source(fig,-20, 0,np.pi/4, 4, inf = True, height = 8))
+    rayon(fig, 10,0, -np.pi + 0.1, direction = False)
 
     plt.show()
 
