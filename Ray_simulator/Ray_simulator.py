@@ -104,8 +104,8 @@ class source:
 
     
 class miroir:
-    def __init__(self,figure, position =0, r = 10, dia = np.pi/3, color ="k"):
-        self.x = position       #position du miroir sur l'axe des abscisses
+    def __init__(self,figure, x =0, r = 10, dia = np.pi/3, color ="k"):
+        self.x = x       #position du miroir sur l'axe des abscisses
         self.diametre = dia     #demi-diamètre d'ouverture
         self.r = r              #Rayon du miroir
         self.color = color      #Couleur du miroir
@@ -129,7 +129,38 @@ class miroir:
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
         
+class dioptre:
+    def __init__(self,fig, x, r, s, height, color = "k"):
+        self.fig, self.ax = fig
+
+        self.x = x #centre du dioptre
+        self.r = r #rayon des cercles
+        self.s = s #distance entre le centre et les sommets
+        self.height = height
+
+        self.color = color
+
         
+        self.diametre = np.arccos((self.r-self.s)/self.r)
+        print(self.diametre)
+
+        self.c1 = self.x + self.r - self.s
+        self.c2 = self.x + self.s - self.r
+
+        self.trace()
+
+    def trace(self):
+        teta = np.linspace(-self.diametre, self.diametre, 100)
+        teta2 = np.linspace(-self.diametre+np.pi, self.diametre+np.pi, 100)
+
+        self.xc1 = self.r*np.cos(teta)+self.c2 #array des x
+        self.xc2 = self.r*np.cos(teta2)+self.c1
+        self.yc = self.r*np.sin(teta)   #array des y
+        self.yc2 = self.r*np.sin(teta2)
+
+        self.ax.plot(self.xc1,self.yc, color = self.color)
+        self.ax.plot(self.xc2,self.yc2, color = self.color)
+
 
     
 if __name__ == "__main__":
@@ -147,11 +178,13 @@ if __name__ == "__main__":
     lst_source = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(position = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(position = -10, r=-15, dia = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = -10, r=-15, dia = np.pi/4, figure = fig, color = "blue")) 
     
     #lst_source.append(source(fig,-20, 0,np.pi/4, 4, inf = True, height = 8))
     rayon(fig, 10,0, -np.pi + 0.1, direction = False)
+
+    dioptre(fig, 10, 15,1, 5)
 
     plt.show()
 
