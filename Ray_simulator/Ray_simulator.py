@@ -53,11 +53,7 @@ class rayon:
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
                 print('continue')
                 continue
-            print("y1 < miroir.max", Y1 <= miroir.max, Y1)
-            print("y1> miroir.min", Y1 >= miroir.min, miroir.max)
-            print((((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x))))
-            print(X1 >= round(np.min(miroir.xc)) and X1 <= round(np.max(miroir.xc)))
-            print("x_array", X1 <= max(self.x_array))
+            
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
             if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and ((X1 <= max(self.x_array) and self.direction) or (X1 >= min(self.x_array) and self.direction == False)):
                 
@@ -66,10 +62,11 @@ class rayon:
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
-                print("teta_rayon", teta_rayon)
-                print("teta_nouveau", teta_nouveau)
-                print("teta", self.teta)
-                if abs(teta_nouveau) > np.pi/2 and abs(teta_nouveau) < 3*np.pi/2: #On définit la direction du rayon en fonction de son angle
+                
+                print("teta_nouveau1", teta_nouveau)
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi
+                print("teta_nouveau2", teta_nouveau)
+                if abs(teta_nouveau) > np.pi/2 : #On définit la direction du rayon en fonction de son angle   and abs(teta_nouveau) < 3*np.pi/2
                     direction = False
                 else:
                     direction = True
@@ -179,10 +176,10 @@ if __name__ == "__main__":
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(x = -10, r=-15, dia = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
     
-    #lst_source.append(source(fig,-20, 0,np.pi/4, 4, inf = True, height = 8))
-    rayon(fig, 10,0, -np.pi + 0.1, direction = False)
+    lst_source.append(source(fig,-5, 0,np.pi/4, 4, inf = True, height = 8))
+    #rayon(fig, 10,0, -np.pi + 0.1, direction = False)
 
     dioptre(fig, 10, 15,1, 5)
 

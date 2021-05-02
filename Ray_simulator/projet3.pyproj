@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>a02d056f-22f5-4960-937f-1129e59db760</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Application_miroir.py</StartupFile>
+    <StartupFile>Ray_simulator.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
