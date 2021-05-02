@@ -127,13 +127,14 @@ class miroir:
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
         
 class dioptre:
-    def __init__(self,fig, x, r, s, color = "k"):
+    def __init__(self,fig, x, r, s,n,  color = "k"):
         self.fig, self.ax = fig
 
         self.x = x #centre du dioptre
         self.r = r #rayon des cercles
         self.s = s #distance entre le centre et les sommets
-        
+        self.n = n #indice de réfraction du milieu du dioptre
+
         self.color = color #Couleur du dioptre
 
         
