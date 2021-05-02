@@ -63,9 +63,7 @@ class rayon:
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
                 
-                print("teta_nouveau1", teta_nouveau)
-                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi
-                print("teta_nouveau2", teta_nouveau)
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
                 if abs(teta_nouveau) > np.pi/2 : #On définit la direction du rayon en fonction de son angle   and abs(teta_nouveau) < 3*np.pi/2
                     direction = False
                 else:
@@ -178,7 +176,7 @@ if __name__ == "__main__":
     lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
     
-    lst_source.append(source(fig,-5, 0,np.pi/4, 4, inf = True, height = 8))
+    lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 10))
     #rayon(fig, 10,0, -np.pi + 0.1, direction = False)
 
     dioptre(fig, 10, 15,1, 5)
