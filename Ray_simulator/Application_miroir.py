@@ -42,7 +42,9 @@ class rayon:
             C = (miroir.x-miroir.r)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (miroir.r**2)
 
             delta = (B**2)-(4*A*C)
-
+            #Si delta négatif, pas de solution, on passe le tour de boucle
+            if delta <0:
+                continue
             #Si r>0, la solution est sur la droite du "cercle", sinon elle est sur la gauche du "cercle"
             if miroir.r>0:
                 X1 = (-B+np.sqrt(delta))/(2*A)
