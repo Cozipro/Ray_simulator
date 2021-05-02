@@ -71,7 +71,6 @@ class rayon:
                     direction = False
                 else:
                     direction = True
-                print("direction:",direction)
                 #On créé un nouveau rayon (réfléchi) en fonction du point de contact avec le miroir, l'angle et sa direction
                 lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = miroir, direction = direction))
 
@@ -128,22 +127,21 @@ class miroir:
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
         
 class dioptre:
-    def __init__(self,fig, x, r, s, height, color = "k"):
+    def __init__(self,fig, x, r, s, color = "k"):
         self.fig, self.ax = fig
 
         self.x = x #centre du dioptre
         self.r = r #rayon des cercles
         self.s = s #distance entre le centre et les sommets
-        self.height = height
-
-        self.color = color
+        
+        self.color = color #Couleur du dioptre
 
         
         self.diametre = np.arccos((self.r-self.s)/self.r)
         print(self.diametre)
 
-        self.c1 = self.x + self.r - self.s
-        self.c2 = self.x + self.s - self.r
+        self.c1 = self.x + self.r - self.s #Centre du premier cercle
+        self.c2 = self.x + self.s - self.r #Centre du deuxieme cercle
 
         self.trace()
 
