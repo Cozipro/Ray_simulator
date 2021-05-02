@@ -43,6 +43,9 @@ class rayon:
 
             delta = (B**2)-(4*A*C)
 
+            #Si delta négatif, pas de solution, on passe le tour de boucle
+            if delta <0:
+                continue
             #Si r>0, la solution est sur la droite du "cercle", sinon elle est sur la gauche du "cercle"
             if miroir.r>0:
                 X1 = (-B+np.sqrt(delta))/(2*A)
