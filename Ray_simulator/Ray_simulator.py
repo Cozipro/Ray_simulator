@@ -34,7 +34,7 @@ class rayon:
         self.ax.plot(self.x_array, y,self.color) #plot
         
     def check(self):
-        for miroir in lst_miroir: #On regarde si le rayon entre en contact avec chaque miroir
+        for miroir in lst_miroir: #Pour chaque miroir existant
             
             #Résolution de l'équation
             A = 1+(np.tan(self.teta)**2)
@@ -63,7 +63,13 @@ class rayon:
 
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
-                teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
+                
+                if miroir.test:
+                    beta = np.pi-teta_rayon+self.teta
+                    alpha = np.arcsin(np.sin(beta)/1.5)
+                    teta_nouveau = -np.pi+alpha+teta_rayon
+                else:
+                    teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
                 
                 teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
@@ -74,6 +80,20 @@ class rayon:
                 #On créé un nouveau rayon (réfléchi) en fonction du point de contact avec le miroir, l'angle et sa direction
                 lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = miroir, direction = direction))
 
+
+
+        for dioptre in lst_dioptre: #Pour chaque dioptre existant
+            
+            #Résolution de l'équation
+            A = 1+(np.tan(self.teta)**2)
+            B = -2*(miroir.x-miroir.r) -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
+            C = (miroir.x-miroir.r)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (miroir.r**2)
+
+            delta = (B**2)-(4*A*C)
+
+            #Si delta négatif, pas de solution, on passe le tour de boucle
+            if delta <0:
+                continue
         self.trace()    #On trace le rayon incident
 
 class source:
@@ -111,6 +131,8 @@ class miroir:
         self.max = int  #Initialisation des variables max et min
         self.min = int
 
+        self.test = False
+
         self.trace()    #On trace le miroir
 
     def trace(self):
@@ -137,6 +159,7 @@ class dioptre:
 
         self.color = color #Couleur du dioptre
 
+        self.test = True
         
         self.diametre = np.arccos((self.r-self.s)/self.r)
         print(self.diametre)
@@ -158,6 +181,10 @@ class dioptre:
         self.ax.plot(self.xc1,self.yc, color = self.color)
         self.ax.plot(self.xc2,self.yc2, color = self.color)
 
+        #Calcul de la hauteur max et min du dioptre
+        self.max = np.max(self.yc)
+        self.min = -self.max
+
 
     
 if __name__ == "__main__":
@@ -173,9 +200,10 @@ if __name__ == "__main__":
     lst_ray = []
     lst_miroir = []
     lst_source = []
+    lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
     
     lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 10))
