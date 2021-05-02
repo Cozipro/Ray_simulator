@@ -42,7 +42,9 @@ class rayon:
             C = (miroir.x-miroir.r)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (miroir.r**2)
 
             delta = (B**2)-(4*A*C)
-
+            #Si delta négatif, pas de solution, on passe le tour de boucle
+            if delta <0:
+                continue
             #Si r>0, la solution est sur la droite du "cercle", sinon elle est sur la gauche du "cercle"
             if miroir.r>0:
                 X1 = (-B+np.sqrt(delta))/(2*A)
@@ -79,7 +81,7 @@ class source:
         self.x = x              #Position x,y de la source
         self.y = y
         self.alpha = angle      #Demie angle d'ouverture de la source
-        self.N = N              #Nombre de rayon créés par la source
+        self.N = int(N)              #Nombre de rayon créés par la source
         self.infiny = inf       #Source à l'infinie
         self.height = height    #Hauteur de création des rayons en mode infini
 
@@ -107,7 +109,7 @@ class miroir:
 
         self.max = int  #Initialisation des variables max et min
         self.min = int
-
+                
         self.trace()    #On trace le miroir
 
     def trace(self):
@@ -134,7 +136,7 @@ if __name__ == "__main__":
     lst_miroir = []
     lst_source = []
     
-    def trace(ouverture, diametre, rayon, inf):
+    def trace(ouverture, diametre, rayon, inf, N):
         #Limites, grille, ratio des axes..
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
@@ -143,7 +145,7 @@ if __name__ == "__main__":
 
         #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
-        lst_source.append(source(fig,-10, 0,ouverture, 8, inf = inf, height = 8))
+        lst_source.append(source(fig,-10, 0,ouverture, N, inf = inf, height = 8))
     
     #Création des wigets
     axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
@@ -151,10 +153,12 @@ if __name__ == "__main__":
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
     axe_infiny = plt.axes([0.025, 0.7, 0.1, 0.1])
     axe_r = plt.axes([0.025, 0.5, 0.1, 0.1])
+    axe_Nray = plt.axes([0.1, 0.89, 0.2, 0.03])
 
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
+    slider_Nray = wdg.Slider(axe_Nray, "N",1,20, valinit=8, valstep=1)
     button_inf = wdg.RadioButtons(axe_infiny, ('Infinie', 'Non'))
     button_type = wdg.RadioButtons(axe_r, ("Concave", "Convexe"))
 
@@ -175,6 +179,7 @@ if __name__ == "__main__":
         ouverture = slider_teta.val
         diametre = slider_diametre.val
         rayon = slider_rayon.val
+        N = slider_Nray.val
 
         #Si infini est choisi, la variable "infiny" devient True, et inversement
         if button_inf.value_selected == "Infinie":
@@ -186,13 +191,15 @@ if __name__ == "__main__":
         if button_type.value_selected == "Convexe":
             rayon *= -1
 
-        trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny)
+        trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny, N = N)
         
 
     #Définition de la fonction à appeler lorsque le widget a été touché
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
+    slider_Nray.on_changed(mise_a_jour)
+
     button_inf.on_clicked(mise_a_jour)
     button_type.on_clicked(mise_a_jour)
 
