@@ -34,30 +34,57 @@ class rayon:
         self.ax.plot(self.x_array, y,self.color) #plot
         
     def check(self):
-        print(lst_dioptre)
         for dioptre in lst_dioptre:
+            print("---------------------")
             #Résolution de l'équation
             A = 1+(np.tan(self.teta)**2)
-            B = -2*dioptre.c1 -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
-            C = (dioptre.c1)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
+            B = -2*dioptre.c -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
+            C = (dioptre.c)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
 
             delta = (B**2)-(4*A*C)
+            if delta < 0:
+                continue
 
-            X1 = (-B-np.sqrt(delta))/(2*A)
+            if dioptre.side:
+                X1 = (-B-np.sqrt(delta))/(2*A)
+            else:
+                X1 = (-B+np.sqrt(delta))/(2*A)
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y
 
-            if (Y1 > dioptre.min and Y1 < dioptre.max):
-                self.x_array = np.linspace(self.x, X1, 100)
+            if round(X1,1) == round(self.x,1):
+                continue
 
-                teta_rayon = np.arcsin(Y1/dioptre.c1)
-                beta = np.pi - teta_rayon + self.teta
-                alpha = np.arcsin(np.sin(beta)/dioptre.n)
+            if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array) and X1 > np.min(self.x_array):
+                print("couleur:",dioptre.color)
                 
-                teta_nouveau = -np.pi + alpha + teta_rayon
+                print("y1", Y1)
+                
+                self.x_array = np.linspace(self.x, X1, 100)
+                
+                
+                if dioptre.side:
+                    teta_rayon = np.pi - np.arctan(abs(Y1/(dioptre.c-X1)))
+                else:
+                    teta_rayon = np.arctan(abs(Y1/(dioptre.c-X1)))
+                
 
-                ix = np.linspace(X1, X1+10, 100)
-                y = (X1-ix)*np.tan(teta_nouveau) + Y1
-                self.ax.plot(ix, y)
+                #teta_rayon = np.arcsin(Y1/dioptre.r)
+                #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
+                beta = np.pi - teta_rayon + self.teta
+
+                print("teta rayon", teta_rayon)
+                print("beta", beta, np.sin(beta))
+                print("Dans le arcsin:", (np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                
+                teta_nouveau =  alpha - teta_rayon
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
+                print("teta_nouveau", teta_nouveau)
+
+
+
+                lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = True))
+                
 
         for miroir in lst_miroir: #Pour chaque miroir existant
             #Résolution de l'équation
@@ -83,17 +110,16 @@ class rayon:
             
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
             if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and ((X1 <= max(self.x_array) and self.direction) or (X1 >= min(self.x_array) and self.direction == False)):
-                
-
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
+                teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
+
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
                 
-                if miroir.test:
-                    beta = np.pi-teta_rayon+self.teta
-                    alpha = np.arcsin(np.sin(beta)/1.5)
-                    teta_nouveau = -np.pi+alpha+teta_rayon
+                if abs(teta_nouveau) > np.pi/2 and abs(teta_nouveau) < 3*np.pi/2: #On définit la direction du rayon en fonction de son angle
+                    direction = False
                 else:
-                    teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
+                    direction = True
 
                 
                 teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
@@ -163,47 +189,50 @@ class miroir:
 
 
 class sous_dioptre:
-    def __init__(self, fig, centre, teta):
-        pass
-
-
-class dioptre:
-    def __init__(self,fig, x, r, s,n,  color = "red"):
+    def __init__(self, fig, centre, r, teta, n_left, n_right, side, color = "red"):
         self.fig, self.ax = fig
+        self.color = color
 
-        self.x = x #centre du dioptre
-        self.r = r #rayon des cercles
-        self.s = s #distance entre le centre et les sommets
-        self.n = n #indice de réfraction du milieu du dioptre
+        self.side = side
 
-        self.color = color #Couleur du dioptre
+        self.r = r
+        self.c = centre
+        self.teta = teta
+        self.n_left = n_left
+        self.n_right = n_right
 
-        self.test = True
-        
-        self.diametre = np.arccos((self.r-self.s)/self.r)
-        print(self.diametre)
-
-        self.c1 = self.x + self.r - self.s #Centre du premier cercle
-        self.c2 = self.x + self.s - self.r #Centre du deuxieme cercle
-
-
-        self.trace()    #Appel de la méthode pour tracer le dioptre
+        self.trace()
 
     def trace(self):
-        teta = np.linspace(-self.diametre, self.diametre, 100)
-        teta2 = np.linspace(-self.diametre+np.pi, self.diametre+np.pi, 100)
+        self.xc = self.r*np.cos(self.teta)+self.c #array des x
+        self.yc = self.r*np.sin(self.teta)   #array des y
 
-        self.xc1 = self.r*np.cos(teta)+self.c2 #array des x
-        self.xc2 = self.r*np.cos(teta2)+self.c1
-        self.yc = self.r*np.sin(teta)   #array des y
-        self.yc2 = self.r*np.sin(teta2)
-
-        self.ax.plot(self.xc1,self.yc, color = self.color)
-        self.ax.plot(self.xc2,self.yc2, color = self.color)
+        self.ax.plot(self.xc, self.yc, color = self.color)
 
         #Calcul de la hauteur max et min du dioptre
         self.max = np.max(self.yc)
         self.min = -self.max
+
+class dioptre:
+    def __init__(self,fig, x, r, s,n,  color = "red"):
+        
+        diametre = np.arccos((r-s)/r)
+
+        c1 = x + r - s #Centre du premier cercle
+        c2 = x + s - r #Centre du deuxieme cercle
+        print(c1)
+        print(c2)
+
+        teta1 = np.linspace(-diametre, diametre, 100)
+        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
+
+        lst_dioptre.append(sous_dioptre(fig, c1, r, teta2, 1, n, True))
+        lst_dioptre.append(sous_dioptre(fig, c2, r, teta1, n, 1, False, color ="green"))
+        
+
+       
+
+        
 
 
     
@@ -224,11 +253,11 @@ if __name__ == "__main__":
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_dioptre.append(dioptre(fig, 10, 15,1, 5))
+    #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
+    dioptre(fig, 10, 15,1, 5)
 
-    lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 16))
-    #rayon(fig, 10,0, -np.pi + 0.1, direction = False)
+    #lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 16))
+    rayon(fig, 0,3, 0, direction = True)
 
     
 
