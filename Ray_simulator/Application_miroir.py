@@ -53,7 +53,6 @@ class rayon:
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
-                
                 continue
             
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
@@ -85,7 +84,7 @@ class source:
         self.infiny = inf       #Source à l'infinie
         self.height = height    #Hauteur de création des rayons en mode infini
 
-        self.create_ray()
+        self.create_ray()       #Appel de la méthode pour créer et tracer les rayons
 
     def create_ray(self):
         lst_angle = np.linspace(-self.alpha, self.alpha, self.N)    #Liste des angles pour chaque rayon de la source
@@ -202,6 +201,9 @@ if __name__ == "__main__":
 
     button_inf.on_clicked(mise_a_jour)
     button_type.on_clicked(mise_a_jour)
+
+
+    
 
     mise_a_jour()   #On appelle une premiere fois la fonction mise_a_jour() pour réaliser le premier plot
     plt.show()
