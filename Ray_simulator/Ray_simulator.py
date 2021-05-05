@@ -75,9 +75,11 @@ class rayon:
                 print("teta rayon", teta_rayon)
                 print("beta", beta, np.sin(beta))
                 print("Dans le arcsin:", (np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                
+
                 alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
-                teta_nouveau =  alpha - teta_rayon
+                teta_nouveau =  -alpha -np.pi +teta_rayon
                 teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
                 print("teta_nouveau", teta_nouveau)
 
