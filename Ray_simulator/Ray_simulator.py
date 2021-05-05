@@ -48,7 +48,16 @@ class rayon:
 
             if (Y1 > dioptre.min and Y1 < dioptre.max):
                 self.x_array = np.linspace(self.x, X1, 100)
+
+                teta_rayon = np.arcsin(Y1/dioptre.c1)
+                beta = np.pi - teta_rayon + self.teta
+                alpha = np.arcsin(np.sin(beta)/dioptre.n)
                 
+                teta_nouveau = -np.pi + alpha + teta_rayon
+
+                ix = np.linspace(X1, X1+10, 100)
+                y = (X1-ix)*np.tan(teta_nouveau) + Y1
+                self.ax.plot(ix, y)
 
         for miroir in lst_miroir: #Pour chaque miroir existant
             #Résolution de l'équation
