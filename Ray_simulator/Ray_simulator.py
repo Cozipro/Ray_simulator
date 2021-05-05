@@ -34,8 +34,23 @@ class rayon:
         self.ax.plot(self.x_array, y,self.color) #plot
         
     def check(self):
+        print(lst_dioptre)
+        for dioptre in lst_dioptre:
+            #Résolution de l'équation
+            A = 1+(np.tan(self.teta)**2)
+            B = -2*dioptre.c1 -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
+            C = (dioptre.c1)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
+
+            delta = (B**2)-(4*A*C)
+
+            X1 = (-B-np.sqrt(delta))/(2*A)
+            Y1 = (X1-self.x)*np.tan(self.teta) +self.y
+
+            if (Y1 > dioptre.min and Y1 < dioptre.max):
+                self.x_array = np.linspace(self.x, X1, 100)
+                
+
         for miroir in lst_miroir: #Pour chaque miroir existant
-            
             #Résolution de l'équation
             A = 1+(np.tan(self.teta)**2)
             B = -2*(miroir.x-miroir.r) -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
@@ -82,18 +97,7 @@ class rayon:
 
 
 
-        for dioptre in lst_dioptre: #Pour chaque dioptre existant
-            
-            #Résolution de l'équation
-            A = 1+(np.tan(self.teta)**2)
-            B = -2*(miroir.x-miroir.r) -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
-            C = (miroir.x-miroir.r)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (miroir.r**2)
-
-            delta = (B**2)-(4*A*C)
-
-            #Si delta négatif, pas de solution, on passe le tour de boucle
-            if delta <0:
-                continue
+       
         self.trace()    #On trace le rayon incident
 
 class source:
@@ -147,9 +151,15 @@ class miroir:
         
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
-        
+
+
+class sous_dioptre:
+    def __init__(self, fig, centre, teta):
+        pass
+
+
 class dioptre:
-    def __init__(self,fig, x, r, s,n,  color = "k"):
+    def __init__(self,fig, x, r, s,n,  color = "red"):
         self.fig, self.ax = fig
 
         self.x = x #centre du dioptre
@@ -167,7 +177,8 @@ class dioptre:
         self.c1 = self.x + self.r - self.s #Centre du premier cercle
         self.c2 = self.x + self.s - self.r #Centre du deuxieme cercle
 
-        self.trace()
+
+        self.trace()    #Appel de la méthode pour tracer le dioptre
 
     def trace(self):
         teta = np.linspace(-self.diametre, self.diametre, 100)
@@ -205,11 +216,12 @@ if __name__ == "__main__":
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    
-    lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 10))
+    lst_dioptre.append(dioptre(fig, 10, 15,1, 5))
+
+    lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 16))
     #rayon(fig, 10,0, -np.pi + 0.1, direction = False)
 
-    dioptre(fig, 10, 15,1, 5)
+    
 
     plt.show()
 

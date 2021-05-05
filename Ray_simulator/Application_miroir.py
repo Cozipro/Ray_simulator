@@ -203,7 +203,6 @@ if __name__ == "__main__":
     button_type.on_clicked(mise_a_jour)
 
 
-    
 
     mise_a_jour()   #On appelle une premiere fois la fonction mise_a_jour() pour réaliser le premier plot
     plt.show()
