@@ -70,7 +70,7 @@ class rayon:
 
                 #teta_rayon = np.arcsin(Y1/dioptre.r)
                 #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
-                beta = np.pi - teta_rayon + self.teta
+                beta = (np.pi - teta_rayon + self.teta)
 
                 print("teta rayon", teta_rayon)
                 print("beta", beta, np.sin(beta))
@@ -254,7 +254,7 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
     dioptre(fig, 10, 15,1, 5)
 

@@ -136,6 +136,15 @@ if __name__ == "__main__":
     lst_source = []
     
     def trace(ouverture, diametre, rayon, inf, N):
+        #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
+        for ray in lst_ray:
+            lst_ray.remove(ray)
+        for sourcee in lst_source:
+            lst_source.remove(sourcee)
+        for miroire in lst_miroir:
+            lst_miroir.remove(miroire)
+        fig[1].cla()    #Clear de la figure
+
         #Limites, grille, ratio des axes..
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
@@ -164,16 +173,6 @@ if __name__ == "__main__":
 
 
     def mise_a_jour(val=None):
-
-        #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
-        for rayon in lst_ray:
-            lst_ray.remove(rayon)
-        for sourcee in lst_source:
-            lst_source.remove(sourcee)
-        for miroire in lst_miroir:
-            lst_miroir.remove(miroire)
-        fig[1].cla()    #Clear de la figure
-        
         #On récupère la valeur des widgets
         ouverture = slider_teta.val
         diametre = slider_diametre.val
