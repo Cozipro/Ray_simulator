@@ -1,7 +1,7 @@
 # Application_miroir.py **Beta 1.1**
 Application d'illustration de stigmastisme et de stigmatisme approché.
 
-## Paramètres du miroir:
+### Paramètres du miroir:
 Concave ou convexe,
 
 Rayon,
@@ -9,7 +9,7 @@ Rayon,
 Angle d'ouverture,
 
 
-## Paramètres de la source de rayons:
+### Paramètres de la source de rayons:
 A l'infini ou non,
 
 Angle d'ouverture,
