@@ -63,7 +63,7 @@ class rayon:
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
-                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi,pi
                 if abs(teta_nouveau) > np.pi/2 and abs(teta_nouveau) < 3*np.pi/2: #On définit la direction du rayon en fonction de son angle
                     direction = False
                 else:

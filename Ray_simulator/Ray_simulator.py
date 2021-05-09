@@ -65,12 +65,13 @@ class rayon:
                 if dioptre.side:
                     teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
                 else:
-                    teta_rayon = np.arctan(Y1/(dioptre.c-X1))
+                    teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
                 
 
                 #teta_rayon = np.arcsin(Y1/dioptre.r)
                 #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
                 beta = (np.pi - teta_rayon + self.teta)
+                
 
                 print("teta rayon", teta_rayon)
                 print("beta", beta, np.sin(beta))
@@ -79,8 +80,14 @@ class rayon:
 
                 alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
-                teta_nouveau =  -alpha -np.pi +teta_rayon
-                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
+                
+                
+                
+                teta_nouveau =  alpha -np.pi +teta_rayon
+                
+                #teta_nouveau =  -alpha -np.pi +teta_rayon    
+                print("teta_nouveau", teta_nouveau)
+                teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
                 print("teta_nouveau", teta_nouveau)
 
 
@@ -285,10 +292,10 @@ if __name__ == "__main__":
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
     dioptre(fig, 10, 15,0.5,1.5, type = "convergent")
 
-    #lst_source.append(source(fig,-5, 0,np.pi/12, 12, inf = False, height = 16))
-    rayon(fig, -3,3, 0, direction = True)
-    rayon(fig, -3,3, -np.pi/12, direction = True)
-    rayon(fig, -3,3, -np.pi/7, direction = True)
+    #lst_source.append(source(fig,-5, 0,np.pi/12, 12, inf = True, height = 16))
+    rayon(fig, -10,3, -np.pi/7, direction = True)
+    rayon(fig, -10,3, -np.pi/12, direction = True)
+    rayon(fig, -10,3, 0, direction = True)
 
     
 
