@@ -63,9 +63,9 @@ class rayon:
                 
                 
                 if dioptre.side:
-                    teta_rayon = np.pi - np.arctan(abs(Y1/(dioptre.c-X1)))
+                    teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
                 else:
-                    teta_rayon = np.arctan(abs(Y1/(dioptre.c-X1)))
+                    teta_rayon = np.arctan(Y1/(dioptre.c-X1))
                 
 
                 #teta_rayon = np.arcsin(Y1/dioptre.r)
@@ -216,7 +216,7 @@ class sous_dioptre:
         self.min = -self.max
 
 class dioptre:
-    def __init__(self,fig, x, r, s,n,  color = "red"):
+    def __init__(self,fig, x, r, s,n,  color = "darkturquoise"):
         
         diametre = np.arccos((r-s)/r)
 
@@ -228,8 +228,8 @@ class dioptre:
         teta1 = np.linspace(-diametre, diametre, 100)
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
-        lst_dioptre.append(sous_dioptre(fig, c1, r, teta2, 1, n, True))
-        lst_dioptre.append(sous_dioptre(fig, c2, r, teta1, n, 1, False, color ="green"))
+        lst_dioptre.append(sous_dioptre(fig, c1, r, teta2, 1, n, True, color = color))
+        lst_dioptre.append(sous_dioptre(fig, c2, r, teta1, n, 1, False, color =color))
         
 
        
@@ -254,12 +254,12 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    dioptre(fig, 10, 15,1, 5)
+    dioptre(fig, 10, 15,1,1.5)
 
-    #lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 16))
-    rayon(fig, 0,3, 0, direction = True)
+    lst_source.append(source(fig,-5, 0,np.pi/4, 12, inf = True, height = 16))
+    #rayon(fig, 0,-3, 0, direction = True)
 
     
 

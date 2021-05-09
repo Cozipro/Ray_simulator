@@ -155,14 +155,15 @@ if __name__ == "__main__":
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
         lst_source.append(source(fig,-10, 0,ouverture, N, inf = inf, height = 8))
     
-    #Création des wigets
-    axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
+    #Création des axes des wigets
+    axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03])
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
     axe_infiny = plt.axes([0.025, 0.7, 0.1, 0.1])
     axe_r = plt.axes([0.025, 0.5, 0.1, 0.1])
     axe_Nray = plt.axes([0.1, 0.89, 0.2, 0.03])
 
+    #Creation des sliders et des boutons
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
@@ -192,7 +193,7 @@ if __name__ == "__main__":
         trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny, N = N)
         
 
-    #Définition de la fonction à appeler lorsque le widget a été touché
+    #Définition de la fonction à appeler lorsque le widget a été modifié
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
