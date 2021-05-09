@@ -227,6 +227,8 @@ class dioptre:
         
         if type == "convergent":
             self.convergent()
+        else:
+            self.divergent()
 
     def convergent(self):
         diametre = np.arccos((self.r-self.s)/self.r)
@@ -241,6 +243,20 @@ class dioptre:
         #Création des deux surfaces
         lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
+
+    def divergent(self):
+        diametre = np.arccos((self.r-self.s)/self.r)
+
+        c1 = self.x + self.s + self.r
+        c2 = self.x - self.s - self.r
+
+        teta1 = np.linspace(-diametre, diametre, 500)
+        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 500)
+
+        #Création des deux surfaces
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
+        
         
 
        
@@ -267,10 +283,12 @@ if __name__ == "__main__":
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    dioptre(fig, 10, 15,1,1.5)
+    dioptre(fig, 10, 15,0.5,1.5, type = "convergent")
 
-    lst_source.append(source(fig,-5, 0,np.pi/4, 12, inf = True, height = 16))
-    #rayon(fig, 0,-3, 0, direction = True)
+    #lst_source.append(source(fig,-5, 0,np.pi/12, 12, inf = False, height = 16))
+    rayon(fig, -3,3, 0, direction = True)
+    rayon(fig, -3,3, -np.pi/12, direction = True)
+    rayon(fig, -3,3, -np.pi/7, direction = True)
 
     
 
