@@ -193,43 +193,54 @@ class miroir:
 class sous_dioptre:
     def __init__(self, fig, centre, r, teta, n_left, n_right, side, color = "red"):
         self.fig, self.ax = fig
-        self.color = color
+        self.color = color #Couleur du dioptre
 
-        self.side = side
+        self.side = side #permet de savoir quel côté du cercle est tracé de manière à choisir la bonne solution de l'équation
 
-        self.r = r
-        self.c = centre
-        self.teta = teta
-        self.n_left = n_left
-        self.n_right = n_right
+        self.r = r #rayon du cercle
+        self.c = centre #centre du cercle
+        self.teta = teta #array contenant les angles nécessaires au tracé des dioptres
+        self.n_left = n_left #indice de réfraction à gauche de la surface
+        self.n_right = n_right #indice de réfraction à droite de la surface
 
-        self.trace()
+        self.trace() #Appel de la méthode trace pour tracer la surface
 
     def trace(self):
         self.xc = self.r*np.cos(self.teta)+self.c #array des x
         self.yc = self.r*np.sin(self.teta)   #array des y
 
-        self.ax.plot(self.xc, self.yc, color = self.color)
+        self.ax.plot(self.xc, self.yc, color = self.color) #tracé
 
-        #Calcul de la hauteur max et min du dioptre
+        #Calcul de la hauteur max et min du dioptre (utile pour la condition dans la méthode check des rayons)
         self.max = np.max(self.yc)
         self.min = -self.max
 
 class dioptre:
-    def __init__(self,fig, x, r, s,n,  color = "darkturquoise"):
-        
-        diametre = np.arccos((r-s)/r)
+    def __init__(self,fig, x, r, s,n,type = "convergent",  color = "darkturquoise"):
+        self.fig = fig
 
-        c1 = x + r - s #Centre du premier cercle
-        c2 = x + s - r #Centre du deuxieme cercle
-        print(c1)
-        print(c2)
+        self.x = x
+        self.r = r
+        self.s = s
+        self. n = n
+        self.color = color
+        
+        if type == "convergent":
+            self.convergent()
+
+    def convergent(self):
+        diametre = np.arccos((self.r-self.s)/self.r)
+
+        c1 = self.x + self.r - self.s #Centre du premier cercle
+        c2 = self.x + self.s - self.r #Centre du deuxieme cercle
+
 
         teta1 = np.linspace(-diametre, diametre, 100)
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
-        lst_dioptre.append(sous_dioptre(fig, c1, r, teta2, 1, n, True, color = color))
-        lst_dioptre.append(sous_dioptre(fig, c2, r, teta1, n, 1, False, color =color))
+        #Création des deux surfaces
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
         
 
        
