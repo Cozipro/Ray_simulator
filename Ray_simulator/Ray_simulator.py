@@ -244,7 +244,7 @@ class dioptre:
         c2 = self.x + self.s - self.r #Centre du deuxieme cercle
 
 
-        teta1 = np.linspace(-diametre, diametre, 100)
+        teta1 = np.linspace(-diametre, diametre, 100)   #Vecteur contenant les angles nécessaires au tracé
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
         #Création des deux surfaces
@@ -257,8 +257,8 @@ class dioptre:
         c1 = self.x + self.s + self.r
         c2 = self.x - self.s - self.r
 
-        teta1 = np.linspace(-diametre, diametre, 500)
-        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 500)
+        teta1 = np.linspace(-diametre, diametre, 1000)
+        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
 
         #Création des deux surfaces
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
@@ -290,12 +290,12 @@ if __name__ == "__main__":
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    dioptre(fig, 10, 15,0.5,1.5, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
 
-    #lst_source.append(source(fig,-5, 0,np.pi/12, 12, inf = True, height = 16))
-    rayon(fig, -10,3, -np.pi/7, direction = True)
-    rayon(fig, -10,3, -np.pi/12, direction = True)
-    rayon(fig, -10,3, 0, direction = True)
+    #lst_source.append(source(fig,-5, 0,np.pi/12, 50, inf = True, height = 8))
+    rayon(fig, -6,3, -np.pi/7, direction = True)
+    rayon(fig, -6,1, -np.pi/16, direction = True)
+    rayon(fig, -6,3, 0, direction = True)
 
     
 
