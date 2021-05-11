@@ -169,12 +169,12 @@ class source:
 
     
 class miroir:
-    def __init__(self,figure, x =0, r = 10, dia = np.pi/3, color ="k"):
+    def __init__(self,fig, x =0, r = 10, diametre = np.pi/3, color ="k"):
         self.x = x       #position du miroir sur l'axe des abscisses
-        self.diametre = dia     #demi-diamètre d'ouverture
+        self.diametre = diametre     #demi-diamètre d'ouverture
         self.r = r              #Rayon du miroir
         self.color = color      #Couleur du miroir
-        self.fig, self.ax = figure  #Figure sur laquelle tracer le miroir
+        self.fig, self.ax = fig  #Figure sur laquelle tracer le miroir
 
         self.max = int  #Initialisation des variables max et min
         self.min = int
