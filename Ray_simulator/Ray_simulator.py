@@ -66,7 +66,6 @@ class rayon:
                     teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
                 else:
                     teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
-                
 
                 #teta_rayon = np.arcsin(Y1/dioptre.r)
                 #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
@@ -81,9 +80,16 @@ class rayon:
                 alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
                 
-                
-                
-                teta_nouveau =  alpha -np.pi +teta_rayon
+                if dioptre.type == "convergent":
+                    if dioptre.side:
+                        teta_nouveau =  alpha -np.pi +teta_rayon
+                    else:
+                        teta_nouveau = -alpha - np.pi + teta_rayon
+                elif dioptre.type == "divergent":
+                    if not dioptre.side:
+                        teta_nouveau =  alpha -np.pi +teta_rayon
+                    else:
+                        teta_nouveau = alpha - np.pi + teta_rayon
                 
                 #teta_nouveau =  -alpha -np.pi +teta_rayon    
                 print("teta_nouveau", teta_nouveau)
@@ -198,17 +204,18 @@ class miroir:
 
 
 class sous_dioptre:
-    def __init__(self, fig, centre, r, teta, n_left, n_right, side, color = "red"):
+    def __init__(self, fig, centre, r, teta, n_left, n_right, side,type, color = "red"):
         self.fig, self.ax = fig
         self.color = color #Couleur du dioptre
 
-        self.side = side #permet de savoir quel côté du cercle est tracé de manière à choisir la bonne solution de l'équation
+        self.side = side #permet de savoir quel côté du cercle est tracé de manière à choisir la bonne solution de l'équation (true = gauche)
 
         self.r = r #rayon du cercle
         self.c = centre #centre du cercle
         self.teta = teta #array contenant les angles nécessaires au tracé des dioptres
         self.n_left = n_left #indice de réfraction à gauche de la surface
         self.n_right = n_right #indice de réfraction à droite de la surface
+        self.type = type
 
         self.trace() #Appel de la méthode trace pour tracer la surface
 
@@ -231,8 +238,9 @@ class dioptre:
         self.s = s
         self. n = n
         self.color = color
+        self.type = type
         
-        if type == "convergent":
+        if self.type == "convergent":
             self.convergent()
         else:
             self.divergent()
@@ -248,8 +256,8 @@ class dioptre:
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
-        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
 
     def divergent(self):
         diametre = np.arccos((self.r-self.s)/self.r)
@@ -261,8 +269,8 @@ class dioptre:
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
         
         
 
@@ -290,12 +298,12 @@ if __name__ == "__main__":
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
     #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
-    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
 
-    #lst_source.append(source(fig,-5, 0,np.pi/12, 50, inf = True, height = 8))
-    rayon(fig, -6,3, -np.pi/7, direction = True)
-    rayon(fig, -6,1, -np.pi/16, direction = True)
-    rayon(fig, -6,3, 0, direction = True)
+    lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
+    #rayon(fig, -6,3, -np.pi/7, direction = True)
+    #rayon(fig, -6,1, -np.pi/16, direction = True)
+    #rayon(fig, -6,3, 0, direction = True)
 
     
 
