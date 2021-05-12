@@ -54,7 +54,7 @@ class rayon:
             if round(X1,1) == round(self.x,1):
                 continue
 
-            if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array) and X1 > np.min(self.x_array):
+            if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):
                 print("couleur:",dioptre.color)
                 
                 print("y1", Y1)
@@ -103,7 +103,7 @@ class rayon:
 
 
 
-                lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = True))
+                lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
                 
 
         for miroir in lst_miroir: #Pour chaque miroir existant
@@ -301,14 +301,14 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    #lst_miroir.append(miroir(x = 7, r=-10, diametre = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
-    dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
-    dioptre(fig, 10, 12,0.5,1.5, type = "convergent")
     
-    lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
+    lst_miroir.append(miroir(x = 13, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
+    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
+    #dioptre(fig, 10, 12,0.5,1.5, type = "convergent")
+    
+    #lst_source.append(source(fig,-5, 0,np.pi/12, 3, inf = True, height = 6))
     #rayon(fig, -15,2, -np.pi/16, direction = True)
-    #rayon(fig, -15,2, -np.pi/12, direction = True)
+    rayon(fig, 1,2, -np.pi/25, direction = True)
     #rayon(fig, -15,2, 0, direction = True)
 
     
