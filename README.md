@@ -16,6 +16,7 @@ Angle d'ouverture,
 
 Nombre de rayons générés
 
+![Screenshot](application_miroir.png)
 
 # Ray_simulator.py **Beta 1.1**
 Simulateur de rayons lumineux paramétrable par l'utilisateur. De nombreux objets peuvent être ajoutés comme des miroirs convexes et concaves, lentilles sphériques convergentes et divergentes ainsi que des rayons ou des sources de rayons lumineux ponctuelles ou à l'infini.
