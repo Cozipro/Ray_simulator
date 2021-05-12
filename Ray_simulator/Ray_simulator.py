@@ -31,7 +31,7 @@ class rayon:
         #méthode traçant le rayon
         y = (self.x_array-self.x)*np.tan(self.teta) +self.y #vecteur y
         
-        self.ax.plot(self.x_array, y,self.color, alpha = 0.2) #plot
+        self.ax.plot(self.x_array, y,self.color, alpha = 1) #plot
         
     def check(self):
         #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
@@ -296,12 +296,12 @@ if __name__ == "__main__":
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
     #lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
-    lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
-    dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
-    dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
+    #dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
     
-    lst_source.append(source(fig,-5, 0,np.pi/12, 100, inf = True, height = 6))
+    lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
     #rayon(fig, -15,2, -np.pi/16, direction = True)
     #rayon(fig, 1,2, -np.pi/25, direction = True)
     #rayon(fig, -15,2, 0, direction = True)
