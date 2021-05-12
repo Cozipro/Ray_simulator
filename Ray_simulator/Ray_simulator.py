@@ -80,20 +80,25 @@ class rayon:
                 alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
                 
+
                 if dioptre.type == "convergent":
                     if dioptre.side:
-                        teta_nouveau =  alpha -np.pi +teta_rayon
+                        teta_nouveau = teta_rayon + alpha - np.pi
                     else:
-                        teta_nouveau = -alpha - np.pi + teta_rayon
-                elif dioptre.type == "divergent":
-                    if not dioptre.side:
-                        teta_nouveau =  alpha -np.pi +teta_rayon
+                        teta_nouveau = -alpha + teta_rayon
+                else:
+                    if dioptre.side:
+                        teta_nouveau = teta_rayon + alpha - np.pi
+                        
                     else:
-                        teta_nouveau = alpha - np.pi + teta_rayon
+                        teta_nouveau = -alpha + teta_rayon
+                        
                 
+                
+
                 #teta_nouveau =  -alpha -np.pi +teta_rayon    
                 print("teta_nouveau", teta_nouveau)
-                teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
+                #teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
                 print("teta_nouveau", teta_nouveau)
 
 
@@ -256,7 +261,7 @@ class dioptre:
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = "red", type = self.type))
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
 
     def divergent(self):
@@ -269,8 +274,8 @@ class dioptre:
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, 1,self.n, False, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = "red", type = self.type))
         
         
 
@@ -296,14 +301,15 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    #lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    #lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 7, r=-10, diametre = np.pi/4, figure = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
     dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
-
+    dioptre(fig, 10, 12,0.5,1.5, type = "convergent")
+    
     lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
-    #rayon(fig, -6,3, -np.pi/7, direction = True)
-    #rayon(fig, -6,1, -np.pi/16, direction = True)
-    #rayon(fig, -6,3, 0, direction = True)
+    #rayon(fig, -15,2, -np.pi/16, direction = True)
+    #rayon(fig, -15,2, -np.pi/12, direction = True)
+    #rayon(fig, -15,2, 0, direction = True)
 
     
 
