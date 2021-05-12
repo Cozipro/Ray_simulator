@@ -34,77 +34,82 @@ class rayon:
         self.ax.plot(self.x_array, y,self.color) #plot
         
     def check(self):
-        for dioptre in lst_dioptre:
-            print("---------------------")
-            #Résolution de l'équation
-            A = 1+(np.tan(self.teta)**2)
-            B = -2*dioptre.c -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
-            C = (dioptre.c)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
+        def fonction(liste):
+            for dioptre in liste:
+                print("---------------------")
+                #Résolution de l'équation
+                A = 1+(np.tan(self.teta)**2)
+                B = -2*dioptre.c -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
+                C = (dioptre.c)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
 
-            delta = (B**2)-(4*A*C)
-            if delta < 0:
-                continue
+                delta = (B**2)-(4*A*C)
+                if delta < 0:
+                    continue
 
-            if dioptre.side:
-                X1 = (-B-np.sqrt(delta))/(2*A)
-            else:
-                X1 = (-B+np.sqrt(delta))/(2*A)
-            Y1 = (X1-self.x)*np.tan(self.teta) +self.y
-
-            if round(X1,1) == round(self.x,1):
-                continue
-
-            if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):
-                print("couleur:",dioptre.color)
-                
-                print("y1", Y1)
-                
-                self.x_array = np.linspace(self.x, X1, 100)
-                
-                
                 if dioptre.side:
-                    teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
+                    X1 = (-B-np.sqrt(delta))/(2*A)
                 else:
-                    teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
+                    X1 = (-B+np.sqrt(delta))/(2*A)
+                Y1 = (X1-self.x)*np.tan(self.teta) +self.y
 
-                #teta_rayon = np.arcsin(Y1/dioptre.r)
-                #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
-                beta = (np.pi - teta_rayon + self.teta)
-                
+                if round(X1,1) == round(self.x,1):
+                    continue
 
-                print("teta rayon", teta_rayon)
-                print("beta", beta, np.sin(beta))
-                print("Dans le arcsin:", (np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):
+                    print("couleur:",dioptre.color)
                 
-
-                alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                    print("y1", Y1)
+                
+                    self.x_array = np.linspace(self.x, X1, 100)
                 
                 
-
-                if dioptre.type == "convergent":
                     if dioptre.side:
-                        teta_nouveau = teta_rayon + alpha - np.pi
+                        teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
                     else:
-                        teta_nouveau = -alpha + teta_rayon
-                else:
-                    if dioptre.side:
-                        teta_nouveau = teta_rayon + alpha - np.pi
-                        
+                        teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
+
+                    #teta_rayon = np.arcsin(Y1/dioptre.r)
+                    #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
+                    beta = (np.pi - teta_rayon + self.teta)
+                
+
+                    print("teta rayon", teta_rayon)
+                    print("beta", beta, np.sin(beta))
+                    print("Dans le arcsin:", (np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                
+
+                    alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                
+                
+
+                    if dioptre.type == "convergent":
+                        if dioptre.side:
+                            teta_nouveau = teta_rayon + alpha - np.pi
+                        else:
+                            teta_nouveau = -alpha + teta_rayon
                     else:
-                        teta_nouveau = -alpha + teta_rayon
+                        if dioptre.side:
+                            teta_nouveau = teta_rayon + alpha - np.pi
+                        
+                        else:
+                            teta_nouveau = -alpha + teta_rayon
                         
                 
                 
 
-                #teta_nouveau =  -alpha -np.pi +teta_rayon    
-                print("teta_nouveau", teta_nouveau)
-                #teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
-                print("teta_nouveau", teta_nouveau)
+                    #teta_nouveau =  -alpha -np.pi +teta_rayon    
+                    print("teta_nouveau", teta_nouveau)
+                    #teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
+                    print("teta_nouveau", teta_nouveau)
 
 
 
-                lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
-                
+                    lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
+        
+        if self.direction:
+            fonction(lst_dioptre)
+        else:
+            fonction(lst_dioptre[::-1])
 
         for miroir in lst_miroir: #Pour chaque miroir existant
             #Résolution de l'équation
