@@ -128,7 +128,7 @@ class miroir:
 
     
 if __name__ == "__main__":
-    fig = plt.subplots()  #Création de la figure
+    fig = plt.subplots(figsize=(11,6))  #Création de la figure
 
     #Listes vides que l'on va remplir par les objets
     lst_ray = []
