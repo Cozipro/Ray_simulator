@@ -89,6 +89,16 @@ class rayon:
                         
                         else:
                             teta_nouveau = -alpha + teta_rayon
+
+                    if (self.direction and dioptre.side) or (not self.direction and not dioptre.side):
+                        teta_nouveau = teta_rayon + alpha - np.pi
+                    else:
+                        teta_nouveau = -alpha + teta_rayon
+
+
+
+
+
                         
                     #Création d'un rayon réfracté en fonction du point d'impact et de l'angle calculé précédemment
                     lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
@@ -118,7 +128,6 @@ class rayon:
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
-                print('continue')
                 continue
             
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
@@ -247,7 +256,7 @@ class dioptre:
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = "red", type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
 
     def divergent(self):
@@ -261,7 +270,7 @@ class dioptre:
 
         #Création des deux surfaces
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, 1,self.n, False, color = self.color, type = self.type))
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = "red", type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = self.color, type = self.type))
         
         
 
@@ -287,15 +296,15 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
-    lst_miroir.append(miroir(x = 13, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
+    lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
-    #dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
-    #dioptre(fig, 10, 12,0.5,1.5, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
+    dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
     
-    #lst_source.append(source(fig,-5, 0,np.pi/12, 3, inf = True, height = 6))
+    lst_source.append(source(fig,-5, 0,np.pi/12, 6, inf = True, height = 6))
     #rayon(fig, -15,2, -np.pi/16, direction = True)
-    rayon(fig, 1,2, -np.pi/25, direction = True)
+    #rayon(fig, 1,2, -np.pi/25, direction = True)
     #rayon(fig, -15,2, 0, direction = True)
 
     
