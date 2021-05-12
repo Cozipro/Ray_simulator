@@ -53,7 +53,6 @@ class rayon:
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
-                
                 continue
             
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
@@ -64,7 +63,7 @@ class rayon:
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
-                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi,pi
                 if abs(teta_nouveau) > np.pi/2 and abs(teta_nouveau) < 3*np.pi/2: #On définit la direction du rayon en fonction de son angle
                     direction = False
                 else:
@@ -85,7 +84,7 @@ class source:
         self.infiny = inf       #Source à l'infinie
         self.height = height    #Hauteur de création des rayons en mode infini
 
-        self.create_ray()
+        self.create_ray()       #Appel de la méthode pour créer et tracer les rayons
 
     def create_ray(self):
         lst_angle = np.linspace(-self.alpha, self.alpha, self.N)    #Liste des angles pour chaque rayon de la source
@@ -137,6 +136,15 @@ if __name__ == "__main__":
     lst_source = []
     
     def trace(ouverture, diametre, rayon, inf, N):
+        #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
+        for ray in lst_ray:
+            lst_ray.remove(ray)
+        for sourcee in lst_source:
+            lst_source.remove(sourcee)
+        for miroire in lst_miroir:
+            lst_miroir.remove(miroire)
+        fig[1].cla()    #Clear de la figure
+
         #Limites, grille, ratio des axes..
         fig[1].set_xlim(-10,10)
         fig[1].set_ylim(-7,7)
@@ -147,14 +155,15 @@ if __name__ == "__main__":
         lst_miroir.append(miroir(position = 7, r=rayon, dia = diametre, figure = fig, color = "blue")) 
         lst_source.append(source(fig,-10, 0,ouverture, N, inf = inf, height = 8))
     
-    #Création des wigets
-    axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03]) #Left, bottom, width, height
+    #Création des axes des wigets
+    axe_teta = plt.axes([0.1, 0.92, 0.2, 0.03])
     axe_dia = plt.axes([0.4, 0.92, 0.2, 0.03]) 
     axe_rayon = plt.axes([0.7,0.92,0.2,0.03])
     axe_infiny = plt.axes([0.025, 0.7, 0.1, 0.1])
     axe_r = plt.axes([0.025, 0.5, 0.1, 0.1])
     axe_Nray = plt.axes([0.1, 0.89, 0.2, 0.03])
 
+    #Creation des sliders et des boutons
     slider_teta = wdg.Slider(axe_teta, 'Ouverture', 0, np.pi/4, valinit=np.pi/6)
     slider_diametre = wdg.Slider(axe_dia, 'Diamètre', 0, np.pi/2, valinit=np.pi/6)
     slider_rayon = wdg.Slider(axe_rayon, "Rayon", 0.1, 15, valinit=10)
@@ -165,16 +174,6 @@ if __name__ == "__main__":
 
 
     def mise_a_jour(val=None):
-
-        #On enlève tous les rayon/miroirs/sources des listes pour en créer des nouveaux
-        for rayon in lst_ray:
-            lst_ray.remove(rayon)
-        for sourcee in lst_source:
-            lst_source.remove(sourcee)
-        for miroire in lst_miroir:
-            lst_miroir.remove(miroire)
-        fig[1].cla()    #Clear de la figure
-        
         #On récupère la valeur des widgets
         ouverture = slider_teta.val
         diametre = slider_diametre.val
@@ -194,7 +193,7 @@ if __name__ == "__main__":
         trace(ouverture = ouverture, diametre = diametre, rayon = rayon, inf = infiny, N = N)
         
 
-    #Définition de la fonction à appeler lorsque le widget a été touché
+    #Définition de la fonction à appeler lorsque le widget a été modifié
     slider_teta.on_changed(mise_a_jour)
     slider_diametre.on_changed(mise_a_jour)
     slider_rayon.on_changed(mise_a_jour)
@@ -202,6 +201,8 @@ if __name__ == "__main__":
 
     button_inf.on_clicked(mise_a_jour)
     button_type.on_clicked(mise_a_jour)
+
+
 
     mise_a_jour()   #On appelle une premiere fois la fonction mise_a_jour() pour réaliser le premier plot
     plt.show()

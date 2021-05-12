@@ -31,11 +31,84 @@ class rayon:
         #méthode traçant le rayon
         y = (self.x_array-self.x)*np.tan(self.teta) +self.y #vecteur y
         
-        self.ax.plot(self.x_array, y,self.color) #plot
+        self.ax.plot(self.x_array, y,self.color, alpha = 1) #plot
         
     def check(self):
-        for miroir in lst_miroir: #On regarde si le rayon entre en contact avec chaque miroir
+        #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
+        def fonction(liste):
+            #Fonction prenant en entrée la liste des dioptre de la figure vérifiant si le rayon entre en contact avec un dioptre.
+            #Si le rayon va vers la gauche, la liste indiquée sera la liste contenant les dioptre parcourue dans le sens inverse.
             
+            for dioptre in liste:   #Pour tous les dioptres
+                
+                #Résolution de l'équation
+                A = 1+(np.tan(self.teta)**2)
+                B = -2*dioptre.c -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
+                C = (dioptre.c)**2 + (self.x**2)*(np.tan(self.teta)**2) - 2*self.y*self.x*np.tan(self.teta) + (self.y**2) - (dioptre.r**2)
+
+                delta = (B**2)-(4*A*C)
+                if delta < 0:
+                    continue
+
+                #On choisi la bonne solution en fonction de l'interface rencontrée
+                if dioptre.side:
+                    X1 = (-B-np.sqrt(delta))/(2*A)
+                else:
+                    X1 = (-B+np.sqrt(delta))/(2*A)
+                Y1 = (X1-self.x)*np.tan(self.teta) +self.y
+
+                #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
+                if round(X1,1) == round(self.x,1):
+                    continue
+
+                #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur l'interface
+                if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):                
+                    self.x_array = np.linspace(self.x, X1, 100)
+                
+                    #On calcul l'angle de la normale en fonction de l'interface rencontrée
+                    if dioptre.side:
+                        teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
+                    else:
+                        teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
+                    
+                    #Calcul de l'angle entre la normale et le rayon incident
+                    beta = (np.pi - teta_rayon + self.teta)
+                    
+                    #Calcul de l'angle entre la normale et le rayon réfracté
+                    alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                
+
+
+                    #Calcul de l'angle entre le rayon réfracté et l'axe des abscisses (voir compte-rendu pour plus de détail)
+                    #if dioptre.type == "convergent":
+                    #    if dioptre.side:
+                    #        teta_nouveau = teta_rayon + alpha - np.pi
+                    #    else:
+                    #        teta_nouveau = -alpha + teta_rayon
+                    #else:
+                    #    if dioptre.side:
+                    #        teta_nouveau = teta_rayon + alpha - np.pi
+                        
+                    #    else:
+                    #        teta_nouveau = -alpha + teta_rayon
+
+                    if (self.direction and dioptre.side) or (not self.direction and not dioptre.side):
+                        teta_nouveau = teta_rayon + alpha - np.pi
+                    else:
+                        teta_nouveau = -alpha + teta_rayon
+
+
+   
+                    #Création d'un rayon réfracté en fonction du point d'impact et de l'angle calculé précédemment
+                    lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
+        
+        #Si le rayon se dirige vers la droite, la liste est parcourue dans son sens normal, sinon dans son sens inverse
+        if self.direction:
+            fonction(lst_dioptre)
+        else:
+            fonction(lst_dioptre[::-1])
+
+        for miroir in lst_miroir: #Pour chaque miroir existant
             #Résolution de l'équation
             A = 1+(np.tan(self.teta)**2)
             B = -2*(miroir.x-miroir.r) -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
@@ -54,18 +127,15 @@ class rayon:
             Y1 = (X1-self.x)*np.tan(self.teta) +self.y  #Calcul de l'ordonnée du point de contact
 
             if round(X1) == round(self.x): #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
-                print('continue')
                 continue
             
             #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur le miroir
             if Y1 < miroir.max and Y1 > miroir.min and (((self.direction == False) and (self.x > miroir.x)) or ((self.direction == True) and (self.x < miroir.x)))  and round(X1,1) >= round(np.min(miroir.xc),1) and round(X1,1) <= round(np.max(miroir.xc),1) and ((X1 <= max(self.x_array) and self.direction) or (X1 >= min(self.x_array) and self.direction == False)):
-                
-
                 self.x_array = np.linspace(self.x,X1,100)  #On créé le vecteur x entre le point de départ et d'arrivée
                 teta_rayon = np.arcsin(Y1/miroir.r)        #On calcule l'angle de la normale
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
-                
+     
                 teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
                 if abs(teta_nouveau) > np.pi/2 : #On définit la direction du rayon en fonction de son angle   and abs(teta_nouveau) < 3*np.pi/2
                     direction = False
@@ -74,6 +144,9 @@ class rayon:
                 #On créé un nouveau rayon (réfléchi) en fonction du point de contact avec le miroir, l'angle et sa direction
                 lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = miroir, direction = direction))
 
+
+                
+       
         self.trace()    #On trace le rayon incident
 
 class source:
@@ -101,15 +174,17 @@ class source:
 
     
 class miroir:
-    def __init__(self,figure, x =0, r = 10, dia = np.pi/3, color ="k"):
+    def __init__(self,fig, x =0, r = 10, diametre = np.pi/3, color ="k"):
         self.x = x       #position du miroir sur l'axe des abscisses
-        self.diametre = dia     #demi-diamètre d'ouverture
+        self.diametre = diametre     #demi-diamètre d'ouverture
         self.r = r              #Rayon du miroir
         self.color = color      #Couleur du miroir
-        self.fig, self.ax = figure  #Figure sur laquelle tracer le miroir
+        self.fig, self.ax = fig  #Figure sur laquelle tracer le miroir
 
         self.max = int  #Initialisation des variables max et min
         self.min = int
+
+        self.test = False
 
         self.trace()    #On trace le miroir
 
@@ -125,38 +200,82 @@ class miroir:
         
         self.ax.plot(self.xc, self.yc, color = self.color) #tracé du miroir
         #self.ax.plot(self.x - self.r, 0,marker = "o", color = self.color) #Tracé du centre du miroir
-        
-class dioptre:
-    def __init__(self,fig, x, r, s,n,  color = "k"):
+
+
+class sous_dioptre:
+    def __init__(self, fig, centre, r, teta, n_left, n_right, side,type, color = "red"):
         self.fig, self.ax = fig
-
-        self.x = x #centre du dioptre
-        self.r = r #rayon des cercles
-        self.s = s #distance entre le centre et les sommets
-        self.n = n #indice de réfraction du milieu du dioptre
-
         self.color = color #Couleur du dioptre
 
-        
-        self.diametre = np.arccos((self.r-self.s)/self.r)
-        print(self.diametre)
+        self.side = side #permet de savoir quel côté du cercle est tracé de manière à choisir la bonne solution de l'équation (true = gauche)
 
-        self.c1 = self.x + self.r - self.s #Centre du premier cercle
-        self.c2 = self.x + self.s - self.r #Centre du deuxieme cercle
+        self.r = r #rayon du cercle
+        self.c = centre #centre du cercle
+        self.teta = teta #array contenant les angles nécessaires au tracé des dioptres
+        self.n_left = n_left #indice de réfraction à gauche de la surface
+        self.n_right = n_right #indice de réfraction à droite de la surface
+        self.type = type
 
-        self.trace()
+        self.trace() #Appel de la méthode trace pour tracer la surface
 
     def trace(self):
-        teta = np.linspace(-self.diametre, self.diametre, 100)
-        teta2 = np.linspace(-self.diametre+np.pi, self.diametre+np.pi, 100)
+        self.xc = self.r*np.cos(self.teta)+self.c #array des x
+        self.yc = self.r*np.sin(self.teta)   #array des y
 
-        self.xc1 = self.r*np.cos(teta)+self.c2 #array des x
-        self.xc2 = self.r*np.cos(teta2)+self.c1
-        self.yc = self.r*np.sin(teta)   #array des y
-        self.yc2 = self.r*np.sin(teta2)
+        self.ax.plot(self.xc, self.yc, color = self.color) #tracé
 
-        self.ax.plot(self.xc1,self.yc, color = self.color)
-        self.ax.plot(self.xc2,self.yc2, color = self.color)
+        #Calcul de la hauteur max et min du dioptre (utile pour la condition dans la méthode check des rayons)
+        self.max = np.max(self.yc)
+        self.min = -self.max
+
+class dioptre:
+    def __init__(self,fig, x, r, s,n,type = "convergent",  color = "darkturquoise"):
+        self.fig = fig
+
+        self.x = x
+        self.r = r
+        self.s = s
+        self. n = n
+        self.color = color
+        self.type = type
+        
+        if self.type == "convergent":
+            self.convergent()
+        else:
+            self.divergent()
+
+    def convergent(self):
+        diametre = np.arccos((self.r-self.s)/self.r)
+
+        c1 = self.x + self.r - self.s #Centre du premier cercle
+        c2 = self.x + self.s - self.r #Centre du deuxieme cercle
+
+
+        teta1 = np.linspace(-diametre, diametre, 100)   #Vecteur contenant les angles nécessaires au tracé
+        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
+
+        #Création des deux surfaces
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
+
+    def divergent(self):
+        diametre = np.arccos((self.r-self.s)/self.r)
+
+        c1 = self.x + self.s + self.r
+        c2 = self.x - self.s - self.r
+
+        teta1 = np.linspace(-diametre, diametre, 1000)
+        teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
+
+        #Création des deux surfaces
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, 1,self.n, False, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = self.color, type = self.type))
+        
+        
+
+       
+
+        
 
 
     
@@ -173,15 +292,21 @@ if __name__ == "__main__":
     lst_ray = []
     lst_miroir = []
     lst_source = []
+    lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    lst_miroir.append(miroir(x = 7, r=-10, dia = np.pi/4, figure = fig, color = "blue")) 
-    lst_miroir.append(miroir(x = -10, r=15, dia = np.pi/4, figure = fig, color = "blue")) 
+    #lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
+    #lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
-    lst_source.append(source(fig,-5, 0,np.pi/4, 8, inf = True, height = 10))
-    #rayon(fig, 10,0, -np.pi + 0.1, direction = False)
+    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
+    #dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
+    
+    lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
+    #rayon(fig, -15,2, -np.pi/16, direction = True)
+    #rayon(fig, 1,2, -np.pi/25, direction = True)
+    #rayon(fig, -15,2, 0, direction = True)
 
-    dioptre(fig, 10, 15,1, 5)
+    
 
     plt.show()
 
