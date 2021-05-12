@@ -31,7 +31,7 @@ class rayon:
         #méthode traçant le rayon
         y = (self.x_array-self.x)*np.tan(self.teta) +self.y #vecteur y
         
-        self.ax.plot(self.x_array, y,self.color) #plot
+        self.ax.plot(self.x_array, y,self.color, alpha = 0.2) #plot
         
     def check(self):
         #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
@@ -77,18 +77,20 @@ class rayon:
                     #Calcul de l'angle entre la normale et le rayon réfracté
                     alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
+
+
                     #Calcul de l'angle entre le rayon réfracté et l'axe des abscisses (voir compte-rendu pour plus de détail)
-                    if dioptre.type == "convergent":
-                        if dioptre.side:
-                            teta_nouveau = teta_rayon + alpha - np.pi
-                        else:
-                            teta_nouveau = -alpha + teta_rayon
-                    else:
-                        if dioptre.side:
-                            teta_nouveau = teta_rayon + alpha - np.pi
+                    #if dioptre.type == "convergent":
+                    #    if dioptre.side:
+                    #        teta_nouveau = teta_rayon + alpha - np.pi
+                    #    else:
+                    #        teta_nouveau = -alpha + teta_rayon
+                    #else:
+                    #    if dioptre.side:
+                    #        teta_nouveau = teta_rayon + alpha - np.pi
                         
-                        else:
-                            teta_nouveau = -alpha + teta_rayon
+                    #    else:
+                    #        teta_nouveau = -alpha + teta_rayon
 
                     if (self.direction and dioptre.side) or (not self.direction and not dioptre.side):
                         teta_nouveau = teta_rayon + alpha - np.pi
@@ -96,10 +98,7 @@ class rayon:
                         teta_nouveau = -alpha + teta_rayon
 
 
-
-
-
-                        
+   
                     #Création d'un rayon réfracté en fonction du point d'impact et de l'angle calculé précédemment
                     lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
         
@@ -302,7 +301,7 @@ if __name__ == "__main__":
     dioptre(fig, 0, 12,0.5,1.5, type = "divergent")
     dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
     
-    lst_source.append(source(fig,-5, 0,np.pi/12, 6, inf = True, height = 6))
+    lst_source.append(source(fig,-5, 0,np.pi/12, 100, inf = True, height = 6))
     #rayon(fig, -15,2, -np.pi/16, direction = True)
     #rayon(fig, 1,2, -np.pi/25, direction = True)
     #rayon(fig, -15,2, 0, direction = True)
