@@ -34,9 +34,13 @@ class rayon:
         self.ax.plot(self.x_array, y,self.color) #plot
         
     def check(self):
+        #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
         def fonction(liste):
-            for dioptre in liste:
-                print("---------------------")
+            #Fonction prenant en entrée la liste des dioptre de la figure vérifiant si le rayon entre en contact avec un dioptre.
+            #Si le rayon va vers la gauche, la liste indiquée sera la liste contenant les dioptre parcourue dans le sens inverse.
+            
+            for dioptre in liste:   #Pour tous les dioptres
+                
                 #Résolution de l'équation
                 A = 1+(np.tan(self.teta)**2)
                 B = -2*dioptre.c -2*self.x*(np.tan(self.teta)**2)+2*self.y*np.tan(self.teta)
@@ -46,42 +50,34 @@ class rayon:
                 if delta < 0:
                     continue
 
+                #On choisi la bonne solution en fonction de l'interface rencontrée
                 if dioptre.side:
                     X1 = (-B-np.sqrt(delta))/(2*A)
                 else:
                     X1 = (-B+np.sqrt(delta))/(2*A)
                 Y1 = (X1-self.x)*np.tan(self.teta) +self.y
 
+                #Sécurité pour éviter de créer un deuxième rayon réfléchi au point de départ d'un rayon réfléchi
                 if round(X1,1) == round(self.x,1):
                     continue
 
-                if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):
-                    print("couleur:",dioptre.color)
-                
-                    print("y1", Y1)
-                
+                #On vérifie si le programme n'as pas choisi la mauvaise solution, et que la solution est bien sur l'interface
+                if (Y1 > dioptre.min and Y1 < dioptre.max) and (X1 > np.min(dioptre.xc) and X1 < np.max(dioptre.xc)) and X1 < np.max(self.x_array)  and X1 > np.min(self.x_array):                
                     self.x_array = np.linspace(self.x, X1, 100)
                 
-                
+                    #On calcul l'angle de la normale en fonction de l'interface rencontrée
                     if dioptre.side:
                         teta_rayon = np.pi - np.arctan(Y1/(dioptre.c-X1))
                     else:
                         teta_rayon = np.arctan(Y1/(X1 - dioptre.c))
-
-                    #teta_rayon = np.arcsin(Y1/dioptre.r)
-                    #teta_rayon = np.arctan(Y1/(dioptre.c-X1))
+                    
+                    #Calcul de l'angle entre la normale et le rayon incident
                     beta = (np.pi - teta_rayon + self.teta)
-                
-
-                    print("teta rayon", teta_rayon)
-                    print("beta", beta, np.sin(beta))
-                    print("Dans le arcsin:", (np.sin(beta)*dioptre.n_left)/dioptre.n_right)
-                
-
+                    
+                    #Calcul de l'angle entre la normale et le rayon réfracté
                     alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
                 
-                
-
+                    #Calcul de l'angle entre le rayon réfracté et l'axe des abscisses (voir compte-rendu pour plus de détail)
                     if dioptre.type == "convergent":
                         if dioptre.side:
                             teta_nouveau = teta_rayon + alpha - np.pi
@@ -94,18 +90,10 @@ class rayon:
                         else:
                             teta_nouveau = -alpha + teta_rayon
                         
-                
-                
-
-                    #teta_nouveau =  -alpha -np.pi +teta_rayon    
-                    print("teta_nouveau", teta_nouveau)
-                    #teta_nouveau = ((teta_nouveau + np.pi) % (2*np.pi)) - np.pi #transforme la valeur de l'angle entre -pi,pi
-                    print("teta_nouveau", teta_nouveau)
-
-
-
+                    #Création d'un rayon réfracté en fonction du point d'impact et de l'angle calculé précédemment
                     lst_ray.append(rayon((self.fig,self.ax),X1,Y1, teta_nouveau, origine = dioptre, direction = self.direction))
         
+        #Si le rayon se dirige vers la droite, la liste est parcourue dans son sens normal, sinon dans son sens inverse
         if self.direction:
             fonction(lst_dioptre)
         else:
@@ -299,9 +287,10 @@ if __name__ == "__main__":
     lst_dioptre = []
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    
+    lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
     lst_miroir.append(miroir(x = 13, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
-    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
+    
+    #dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
     #dioptre(fig, 10, 12,0.5,1.5, type = "convergent")
     
     #lst_source.append(source(fig,-5, 0,np.pi/12, 3, inf = True, height = 6))
