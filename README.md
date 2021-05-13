@@ -1,5 +1,7 @@
+Ceci est un projet du cursus d'Acoustique et Vibration de l'université du Mans. Il contient très probablement des erreurs.
+
 # Application_miroir.py **Beta 1.1**
-Application d'illustration de stigmastisme et de stigmatisme approché.
+Application d'illustration de stigmastisme et de stigmatisme approché. 
 
 ### Paramètres du miroir:
 Concave ou convexe,
