@@ -308,16 +308,16 @@ class dioptre:
     def __init__(self,fig, x, r, s,n,type = "convergent",  color = "darkturquoise"):
         self.fig = fig
 
-        self.x = x
-        self.r = r
-        self.s = s
-        self. n = n
-        self.color = color
-        self.type = type
+        self.x = x  #Centre de la lentille
+        self.r = r  #Rayon des dioptres
+        self.s = s  #Distance entre le centre de la lentille et les sommets des dioptres
+        self. n = n #Indice de réfraction de la lentille
+        self.color = color  #Couleur de la lentille
+        self.type = type    #Type de lentille
         
-        #Si l'utilisateur ne rentre pas un bon type de lentille
+        #Si l'utilisateur ne rentre pas un bon type de lentille, le programme reporte une erreur
         if self.type not in ["convergent", "divergent"]:
-            raise ValueError("{} n'est pas un type de lentille valide".format(self.type))
+            raise ValueError("{} is not a valid lens type".format(self.type))
 
         #Appel de la méthode correspondant au type de lentille pour tracer les interfaces de la bonne manière
         if self.type == "convergent":
@@ -340,10 +340,10 @@ class dioptre:
         lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
 
     def divergent(self):
-        diametre = np.arccos((self.r-self.s)/self.r)
+        diametre = np.arccos((self.r-self.s)/self.r)    #angle d'ouverture maximale
 
-        c1 = self.x + self.s + self.r
-        c2 = self.x - self.s - self.r
+        c1 = self.x + self.s + self.r   #Centre du premier cercle
+        c2 = self.x - self.s - self.r   #Centre du deuxieme cercle
 
         teta1 = np.linspace(-diametre, diametre, 1000)  #Vecteurs contenant les angles nécessaires au tracé
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
@@ -373,16 +373,14 @@ if __name__ == "__main__":
     lst_ray = []
     lst_miroir = []
     lst_source = []
-    lst_dioptre = []
+    lst_dioptre = []    #Cette liste n'est pas a remplir par l'utilisateur, c'est le programme qui la rempli automatiquement
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    #lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = 15, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
-    #dioptre(fig, -3, 12,0.5,1.38, type = "divergent")
-    dioptre(fig, 0, 16,0.8,2, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.38, type = "divergent")
     
     lst_source.append(source(fig,-10, 0,np.pi/12, 100, inf = True, height = 4))
-    fig[1].plot((15,15),(-5,5))
 
     
 
