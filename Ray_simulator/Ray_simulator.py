@@ -3,6 +3,23 @@ import numpy as np
 import matplotlib.widgets as wdg
 
 class rayon:
+    """ 
+    Tracé d'un rayon lumineux et détermination des points de contact
+
+    ----------
+    x : float
+        Abscisse du point d'origine du rayon.
+    y : float
+        Ordonnée du point d'origine du rayon.
+    teta : float
+        Angle du rayon par rapport à l'axe des abscisses.
+    color : str
+        Couleur du rayon.
+    direction : bool
+        Direction de propagation du rayon (True = vers la droite)
+    origine : object
+        Origine du rayon (None si provient d'une source)
+    """
     def __init__(self,figure, x =0, y=0, teta=0, color = "k", direction = True, origine = None):
         self.x = x  #abscisse d'origine
         self.y =y   #ordonnée d'origine
@@ -31,7 +48,7 @@ class rayon:
         #méthode traçant le rayon
         y = (self.x_array-self.x)*np.tan(self.teta) +self.y #vecteur y
         
-        self.ax.plot(self.x_array, y,self.color, alpha = 1) #plot
+        self.ax.plot(self.x_array, y,self.color, alpha = 0.2) #plot
         
     def check(self):
         #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
@@ -79,18 +96,6 @@ class rayon:
                 
 
 
-                    #Calcul de l'angle entre le rayon réfracté et l'axe des abscisses (voir compte-rendu pour plus de détail)
-                    #if dioptre.type == "convergent":
-                    #    if dioptre.side:
-                    #        teta_nouveau = teta_rayon + alpha - np.pi
-                    #    else:
-                    #        teta_nouveau = -alpha + teta_rayon
-                    #else:
-                    #    if dioptre.side:
-                    #        teta_nouveau = teta_rayon + alpha - np.pi
-                        
-                    #    else:
-                    #        teta_nouveau = -alpha + teta_rayon
 
                     if (self.direction and dioptre.side) or (not self.direction and not dioptre.side):
                         teta_nouveau = teta_rayon + alpha - np.pi
@@ -150,6 +155,24 @@ class rayon:
         self.trace()    #On trace le rayon incident
 
 class source:
+    """ 
+    Créé un nombre déterminé de rayon lumineux suivant plusieurs conditions
+    Permet de créer une source à l'infinie ou non.
+
+    ----------
+    x : float
+        Abscisse du point d'origine des rayons.
+    y : float
+        Ordonnée du point d'origine des rayon.
+    angle : float
+        Angle d'ouverture de la source lorsque la source n'est pas à l'infinie.
+    N : int
+        Nombre de rayons
+    inf : bool
+        Source à l'infinie ou non.
+    height : str
+        Hauteur de répartition des rayons lorsque la source est considérée à l'infinie.
+    """
     def __init__(self,figure, x, y, angle, N, inf = False, height = 0):
         self.figure = figure    #Figure sur laquelle tracer
         self.x = x              #Position x,y de la source
@@ -174,6 +197,21 @@ class source:
 
     
 class miroir:
+    """ 
+    Créé un miroir sphérique concave ou convexe
+
+    ----------
+    fig : matplotlib figure
+        Figure sur laquelle tracer le miroir.
+    x : float
+        Abscisse du point d'origine des rayons.
+    r : float
+        Rayon du miroir.
+    diametre : float
+        Angle d'ouverture du miroir
+    color : str
+        Couleur du miroir
+    """
     def __init__(self,fig, x =0, r = 10, diametre = np.pi/3, color ="k"):
         self.x = x       #position du miroir sur l'axe des abscisses
         self.diametre = diametre     #demi-diamètre d'ouverture
@@ -203,7 +241,27 @@ class miroir:
 
 
 class sous_dioptre:
-    def __init__(self, fig, centre, r, teta, n_left, n_right, side,type, color = "red"):
+    """ 
+    Créé une interface d'une lentille bi-concave ou bi-convexe.
+    Voir class dioptre.
+
+    ----------
+    fig : matplotlib figure
+        Figure sur laquelle tracer le dioptre.
+    centre : float
+        centre du cercle
+    r : float
+        Rayon du cercle.
+    n_left : float
+        indice de réfraction à gauche de l'interface
+    n_right : float
+        indice de réfraction à droite de l'interface
+    side : bool
+        côté concave de la lentille
+    color : str
+        Couleur du miroir
+    """
+    def __init__(self, fig, centre, r, teta, n_left, n_right, side, color = "red"):
         self.fig, self.ax = fig
         self.color = color #Couleur du dioptre
 
@@ -214,7 +272,6 @@ class sous_dioptre:
         self.teta = teta #array contenant les angles nécessaires au tracé des dioptres
         self.n_left = n_left #indice de réfraction à gauche de la surface
         self.n_right = n_right #indice de réfraction à droite de la surface
-        self.type = type
 
         self.trace() #Appel de la méthode trace pour tracer la surface
 
@@ -229,16 +286,40 @@ class sous_dioptre:
         self.min = -self.max
 
 class dioptre:
+    """ 
+    Créé deux interfaces sous_dioptre par rapports aux paramètres de la lentille.
+
+    ----------
+    fig : matplotlib figure
+        Figure sur laquelle tracer le dioptre.
+    x : float
+        centre de la lentille
+    r : float
+        Rayon du cercle.
+    s : float
+        distance entre le centre de la lentille et les sommets des cercles
+    n : float
+        indice de réfraction de la lentille
+    type : str
+        type de la lentille (convergent ou divergent)
+    color : str
+        Couleur du miroir
+    """
     def __init__(self,fig, x, r, s,n,type = "convergent",  color = "darkturquoise"):
         self.fig = fig
 
-        self.x = x
-        self.r = r
-        self.s = s
-        self. n = n
-        self.color = color
-        self.type = type
+        self.x = x  #Centre de la lentille
+        self.r = r  #Rayon des dioptres
+        self.s = s  #Distance entre le centre de la lentille et les sommets des dioptres
+        self. n = n #Indice de réfraction de la lentille
+        self.color = color  #Couleur de la lentille
+        self.type = type    #Type de lentille
         
+        #Si l'utilisateur ne rentre pas un bon type de lentille, le programme reporte une erreur
+        if self.type not in ["convergent", "divergent"]:
+            raise ValueError("{} is not a valid lens type".format(self.type))
+
+        #Appel de la méthode correspondant au type de lentille pour tracer les interfaces de la bonne manière
         if self.type == "convergent":
             self.convergent()
         else:
@@ -251,25 +332,25 @@ class dioptre:
         c2 = self.x + self.s - self.r #Centre du deuxieme cercle
 
 
-        teta1 = np.linspace(-diametre, diametre, 100)   #Vecteur contenant les angles nécessaires au tracé
+        teta1 = np.linspace(-diametre, diametre, 100)   #Vecteurs contenant les angles nécessaires au tracé
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 100)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color, type = self.type))
-        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2, 1, self.n, True, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, self.n, 1, False, color = self.color))
 
     def divergent(self):
-        diametre = np.arccos((self.r-self.s)/self.r)
+        diametre = np.arccos((self.r-self.s)/self.r)    #angle d'ouverture maximale
 
-        c1 = self.x + self.s + self.r
-        c2 = self.x - self.s - self.r
+        c1 = self.x + self.s + self.r   #Centre du premier cercle
+        c2 = self.x - self.s - self.r   #Centre du deuxieme cercle
 
-        teta1 = np.linspace(-diametre, diametre, 1000)
+        teta1 = np.linspace(-diametre, diametre, 1000)  #Vecteurs contenant les angles nécessaires au tracé
         teta2 = np.linspace(-diametre+np.pi, diametre+np.pi, 1000)
 
         #Création des deux surfaces
-        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, 1,self.n, False, color = self.color, type = self.type))
-        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = self.color, type = self.type))
+        lst_dioptre.append(sous_dioptre(fig, c2, self.r, teta1, 1,self.n, False, color = self.color))
+        lst_dioptre.append(sous_dioptre(fig, c1, self.r, teta2,self.n, 1, True, color = self.color))
         
         
 
@@ -292,19 +373,14 @@ if __name__ == "__main__":
     lst_ray = []
     lst_miroir = []
     lst_source = []
-    lst_dioptre = []
+    lst_dioptre = []    #Cette liste n'est pas a remplir par l'utilisateur, c'est le programme qui la rempli automatiquement
     
     #On créé les objets miroir et source que l'on ajoute dans la liste correspondant
-    #lst_miroir.append(miroir(x = 5, r=-15, diametre = np.pi/4, fig = fig, color = "blue"))
-    #lst_miroir.append(miroir(x = 15, r=15, diametre = np.pi/4, fig = fig, color = "blue")) 
+    lst_miroir.append(miroir(x = 15, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
-    dioptre(fig, 0, 12,0.5,1.5, type = "convergent")
-    #dioptre(fig, 10, 16,0.8,1.5, type = "convergent")
+    dioptre(fig, 0, 12,0.5,1.38, type = "divergent")
     
-    lst_source.append(source(fig,-5, 0,np.pi/12, 10, inf = True, height = 6))
-    #rayon(fig, -15,2, -np.pi/16, direction = True)
-    #rayon(fig, 1,2, -np.pi/25, direction = True)
-    #rayon(fig, -15,2, 0, direction = True)
+    lst_source.append(source(fig,-10, 0,np.pi/12, 100, inf = True, height = 4))
 
     
 
