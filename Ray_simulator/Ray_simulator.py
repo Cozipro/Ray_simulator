@@ -48,7 +48,7 @@ class rayon:
         #méthode traçant le rayon
         y = (self.x_array-self.x)*np.tan(self.teta) +self.y #vecteur y
         
-        self.ax.plot(self.x_array, y,self.color, alpha = 0.2) #plot
+        self.ax.plot(self.x_array, y,self.color, alpha = 0.8) #plot
         
     def check(self):
         #Méthode vérifiant si le rayon entre en contact avec un obstacle (dioptre ou miroir)
@@ -91,12 +91,16 @@ class rayon:
                     #Calcul de l'angle entre la normale et le rayon incident
                     beta = (np.pi - teta_rayon + self.teta)
                     
+
                     #Calcul de l'angle entre la normale et le rayon réfracté
-                    alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                    if self.direction:
+                        alpha = np.arcsin((np.sin(beta)*dioptre.n_left)/dioptre.n_right)
+                    else:
+                        alpha = np.arcsin((np.sin(beta)*dioptre.n_right)/dioptre.n_left)
                 
 
-
-
+                    #Calcul de l'angle du rayon réfracté par rapport à l'axe des abscisses
+                    #Ce calcul dépend de l'interface rencontrée
                     if (self.direction and dioptre.side) or (not self.direction and not dioptre.side):
                         teta_nouveau = teta_rayon + alpha - np.pi
                     else:
@@ -141,7 +145,7 @@ class rayon:
                 teta_nouveau = -np.pi + 2*teta_rayon -self.teta    #On calcule l'angle du rayon réfléchi
 
      
-                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi/2,pi/2
+                teta_nouveau = (teta_nouveau + np.pi) % (2 * np.pi) - np.pi #transforme la valeur de l'angle entre -pi,pi
                 if abs(teta_nouveau) > np.pi/2 : #On définit la direction du rayon en fonction de son angle   and abs(teta_nouveau) < 3*np.pi/2
                     direction = False
                 else:
@@ -173,7 +177,7 @@ class source:
     height : str
         Hauteur de répartition des rayons lorsque la source est considérée à l'infinie.
     """
-    def __init__(self,figure, x, y, angle, N, inf = False, height = 0):
+    def __init__(self,figure, x, y, angle, N, inf = False, height = 0, direction = True):
         self.figure = figure    #Figure sur laquelle tracer
         self.x = x              #Position x,y de la source
         self.y = y
@@ -181,6 +185,7 @@ class source:
         self.N = N              #Nombre de rayon créés par la source
         self.infiny = inf       #Source à l'infinie
         self.height = height    #Hauteur de création des rayons en mode infini
+        self.direction = direction
 
         self.create_ray()
 
@@ -189,7 +194,7 @@ class source:
 
         if self.infiny: #Si la source est à l'infini
             for y in np.linspace(-self.height/2, self.height/2, self.N):
-                lst_ray.append(rayon(self.figure, self.x, y, 0))    #Création d'un rayon d'angle 0rad
+                lst_ray.append(rayon(self.figure, self.x, y, 0, direction = self.direction))    #Création d'un rayon d'angle 0rad
         else:
             for angle in lst_angle:
                 lst_ray.append(rayon(self.figure, self.x, self.y, angle)) #Sinon on trace un rayon avec l'angle correspondant
@@ -379,9 +384,10 @@ if __name__ == "__main__":
     lst_miroir.append(miroir(x = 15, r=-15, diametre = np.pi/4, fig = fig, color = "blue")) 
     
     dioptre(fig, 0, 12,0.5,1.38, type = "divergent")
-    
-    lst_source.append(source(fig,-10, 0,np.pi/12, 100, inf = True, height = 4))
 
+    
+    
+    lst_source.append(source(fig,-10, 0,np.pi/12, 10, inf = True, height = 4, direction = True))
     
 
     plt.show()
